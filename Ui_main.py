@@ -81,6 +81,9 @@ class Ui_Form(object):
         self.label_3.setGeometry(QtCore.QRect(270, 170, 231, 31))
         self.label_3.setStyleSheet("font: bold 18pt \"Calibri\";")
         self.label_3.setObjectName("label_3")
+        self.listWidget = QtWidgets.QListWidget(Form)
+        self.listWidget.setGeometry(QtCore.QRect(410, 180, 231, 271))
+        self.listWidget.setObjectName("listWidget")
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)

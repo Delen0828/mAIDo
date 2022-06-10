@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>391</width>
+    <width>710</width>
     <height>466</height>
    </rect>
   </property>
@@ -34,16 +34,6 @@
    </property>
    <property name="text">
     <string>Add</string>
-   </property>
-  </widget>
-  <widget class="QListView" name="listView">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>140</y>
-     <width>391</width>
-     <height>321</height>
-    </rect>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButton_2">
@@ -93,6 +83,16 @@
      <string>None</string>
     </property>
    </item>
+  </widget>
+  <widget class="QTableView" name="tableView">
+   <property name="geometry">
+    <rect>
+     <x>55</x>
+     <y>141</y>
+     <width>311</width>
+     <height>231</height>
+    </rect>
+   </property>
   </widget>
  </widget>
  <resources/>

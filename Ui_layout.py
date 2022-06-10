@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'c:\Users\Lion_\Desktop\mAIDo\add.ui'
+# Form implementation generated from reading ui file 'c:\Users\Lion_\Desktop\mAIDo\layout.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.4
 #
@@ -14,16 +14,13 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(391, 466)
+        Form.resize(710, 466)
         self.textEdit = QtWidgets.QTextEdit(Form)
         self.textEdit.setGeometry(QtCore.QRect(50, 20, 201, 31))
         self.textEdit.setObjectName("textEdit")
         self.pushButton = QtWidgets.QPushButton(Form)
         self.pushButton.setGeometry(QtCore.QRect(300, 20, 75, 23))
         self.pushButton.setObjectName("pushButton")
-        self.listView = QtWidgets.QListView(Form)
-        self.listView.setGeometry(QtCore.QRect(0, 140, 391, 321))
-        self.listView.setObjectName("listView")
         self.pushButton_2 = QtWidgets.QPushButton(Form)
         self.pushButton_2.setGeometry(QtCore.QRect(300, 50, 75, 23))
         self.pushButton_2.setObjectName("pushButton_2")
@@ -36,6 +33,9 @@ class Ui_Form(object):
         self.comboBox.addItem("")
         self.comboBox.addItem("")
         self.comboBox.addItem("")
+        self.tableView = QtWidgets.QTableView(Form)
+        self.tableView.setGeometry(QtCore.QRect(50, 140, 311, 231))
+        self.tableView.setObjectName("tableView")
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)

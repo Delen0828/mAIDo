@@ -21,7 +21,7 @@ class Window(QWidget, Ui_Form):
 		self.model=QStandardItemModel(4,4)
 		self.check_box = QCheckBox(self)
 		#设置水平方向四个头标签文本内容
-		self.model.setHorizontalHeaderLabels(['状态','姓名','身份证','地址'])
+		self.model.setHorizontalHeaderLabels(['check','time','task','priority'])
 
 		for row in range(4):
 			for column in range(4):
@@ -29,11 +29,14 @@ class Window(QWidget, Ui_Form):
 				item_checked.setCheckState(Qt.Checked)
 				item_checked.setCheckable(True)
 				self.model.setItem(column,0, item_checked)
-				item=QStandardItem('row %s,column %s'%(row,column))
+				item=QStandardItem('r%s,c%s'%(row,column))
 				#设置每个位置的文本值
 				self.model.setItem(row,column,item)
 
 		self.tableView.setModel(self.model)
+		self.tableView.horizontalHeader().hide() #hide header
+		self.tableView.resizeColumnToContents(1)
+		self.tableView.resizeColumnToContents(2)
 		#设置布局
 		layout=QVBoxLayout()
 		layout.addWidget(self.check_box)

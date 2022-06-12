@@ -20,11 +20,11 @@ class Ui_Form(object):
         self.textEdit.setObjectName("textEdit")
         self.AddButton = QtWidgets.QPushButton(Form)
         self.AddButton.setGeometry(QtCore.QRect(300, 20, 75, 23))
-        self.AddButton.setObjectName("pushButton")
+        self.AddButton.setObjectName("AddButton")
         self.AddButton.clicked.connect(Form.add)
         self.DeleteButton = QtWidgets.QPushButton(Form)
         self.DeleteButton.setGeometry(QtCore.QRect(300, 50, 75, 23))
-        self.DeleteButton.setObjectName("pushButton_2")
+        self.DeleteButton.setObjectName("DeleteButton")
         self.DeleteButton.clicked.connect(Form.Delete)
         self.TaskDue = QtWidgets.QDateTimeEdit(Form)
         self.TaskDue.setGeometry(QtCore.QRect(50, 60, 194, 22))
@@ -35,13 +35,9 @@ class Ui_Form(object):
         self.comboBox.addItem("")
         self.comboBox.addItem("")
         self.comboBox.addItem("")
-        #self.tableView = QtWidgets.QTableView(Form)
-        #self.tableView.setGeometry(QtCore.QRect(50, 130, 331, 311))
-        #self.tableView.setObjectName("tableView")
         self.tableWidget=QtWidgets.QTableWidget(Form)
         self.tableWidget.setGeometry(QtCore.QRect(50, 130, 420, 350))
         self.tableWidget.setObjectName("tableWidget")
-
         #self.tableWidget.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
         self.tableWidget.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
         self.retranslateUi(Form)
@@ -49,7 +45,7 @@ class Ui_Form(object):
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("Form", "Form"))
+        Form.setWindowTitle(_translate("Form", "mAIDo-demo"))
         self.AddButton.setText(_translate("Form", "Add"))
         self.DeleteButton.setText(_translate("Form", "Remove"))
         self.comboBox.setItemText(1, _translate("Form", "1"))

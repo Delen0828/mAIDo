@@ -31,11 +31,8 @@ class Window(QWidget, Ui_Form):
 			self.tableWidget.setHorizontalHeaderLabels(['Tick', 'Task Name', 'Deadline', 'Priority'])
 
 	def sortTaskList(self):
-		# Dict={True:1,False:0}
-		self.Tasklist.sort_values(by='Tick',ascending=True,inplace=True)
-		print(self.Tasklist)
-		# undone_list= for item in self.Tasklist
-		# print(self.Tasklist[0]==False)
+		self.Tasklist.sort_values(by=['Tick','Priority','Deadline'],ascending=[True,False,True],inplace=True)
+		
 	def UpdateTable(self):
 		self.tableWidget.clearContents()
 		self.tableWidget.setRowCount(self.TaskNum)

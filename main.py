@@ -7,6 +7,7 @@ from layout import Ui_Form
 import sys
 import functools
 import pandas as pd
+# import os
 PriorityDict={0:'None',1:'1',2:'2'}
 
 
@@ -85,4 +86,5 @@ if __name__ == '__main__':
 	app = QApplication(sys.argv)
 	window = Window()
 	window.show()
+	# os.system("pause")
 	sys.exit(app.exec_())

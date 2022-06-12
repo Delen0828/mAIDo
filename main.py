@@ -20,7 +20,7 @@ class Window(QWidget, Ui_Form):
 
 	def TaskTable(self):
 			# 数据源 模型
-			self.Tasklist = pd.DataFrame(columns=['Tick', 'Task Name', 'Deadline','Priority'])
+			self.Tasklist = pd.DataFrame(columns=['Tick', 'Task Name', 'Deadline', 'Priority'])
 			self.TaskNum=0
 			# self.model.setVerticalHeaderLabels(['1', '3', '4'])
 			# 关联QTableView控件和Model
@@ -28,15 +28,12 @@ class Window(QWidget, Ui_Form):
 			# 添加数据
 			self.tableWidget.setRowCount(0)
 			self.tableWidget.setColumnCount(4)
-			self.tableWidget.setHorizontalHeaderLabels(['Tick', 'Task Name', 'Deadline','Priority'])
+			self.tableWidget.setHorizontalHeaderLabels(['Tick', 'Task Name', 'Deadline', 'Priority'])
 
 	def sortTaskList(self):
-		Dict={True:1,False:0}
-		def Mycmp(a,b):
-			a=Dict[a[0]]
-			b=Dict[b[0]]
-			return a-b
-		# self.Tasklist.sort(key=functools.cmp_to_key(Mycmp),reverse=False)
+		# Dict={True:1,False:0}
+		self.Tasklist.sort_values(by='Tick',ascending=True,inplace=True)
+		print(self.Tasklist)
 		# undone_list= for item in self.Tasklist
 		# print(self.Tasklist[0]==False)
 	def UpdateTable(self):

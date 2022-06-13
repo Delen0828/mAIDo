@@ -6,8 +6,8 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from layout import Ui_Form
 import sys
-import functools
-import numpy as np
+# import functools
+# import numpy as np
 import pandas as pd
 
 PriorityDict = {0: 'None', 1: '1', 2: '2'}

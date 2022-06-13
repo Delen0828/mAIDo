@@ -56,8 +56,8 @@ class Window(QWidget, Ui_Form):
         self.UpdateTable()
 
     def add(self):
-        item = [False, self.textEdit.toPlainText(), self.TaskDue.text(), self.comboBox.currentIndex()]
-        self.Tasklist.loc[len(self.Tasklist)] = item
+        item = {'Tick':False, 'Task Name':self.textEdit.toPlainText(), 'Deadline':self.TaskDue.text(), 'Priority':self.comboBox.currentIndex()}
+        self.Tasklist=self.Tasklist.append( item,ignore_index = True)
         self.TaskNum += 1
         self.tableWidget.setRowCount(self.TaskNum)
         self.sortTaskList()

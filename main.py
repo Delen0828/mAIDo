@@ -17,39 +17,29 @@ class Window(QWidget, Ui_Form):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("mAIDo-Demo")
-        # self.resize(1,1)
         self.setupUi(self)
         self.TaskTable()
 
     def TaskTable(self):
-        # 数据源 模型
         self.Tasklist = pd.DataFrame(columns=['Tick', 'Task Name', 'Deadline', 'Priority'])
         self.TaskNum = 0
-        # self.model.setVerticalHeaderLabels(['1', '3', '4'])
-        # 关联QTableView控件和Model
-        # self.tableView.setModel(self.model)
-        # 添加数据
         self.tableWidget.setRowCount(0)
         self.tableWidget.setColumnCount(4)
         self.tableWidget.setHorizontalHeaderLabels(['Tick', 'Task Name', 'Deadline', 'Priority'])
 
     def sortTaskList(self):
-        # Dict={True:1,False:0}
         self.Tasklist.sort_values(by=['Tick','Priority','Deadline'],ascending=[True,False,True],inplace=True)
 
-    # undone_list= for item in self.Tasklist
-    # print(self.Tasklist[0]==False)
     def UpdateTable(self):
         self.tableWidget.clearContents()
         self.tableWidget.setRowCount(self.TaskNum)
 
         for row in range(self.TaskNum):
-            # print(list(self.Tasklist.loc[0]))
             for column in range(4):
                 if column == 0:
                     checkbox = QCheckBox()
                     checkbox.setStyleSheet('QComboBox{margin:3px};')
-                    checkbox.clicked.connect(self.updateCheck)  # 检测check点击，更新list
+                    checkbox.clicked.connect(self.updateCheck)	#update the click signal to tasklist 
                     checkbox.setChecked(self.Tasklist.iloc[row][column])
                     self.tableWidget.setCellWidget(row, 0, checkbox)
                 elif column == 3:
@@ -68,7 +58,6 @@ class Window(QWidget, Ui_Form):
     def add(self):
         item = [False, self.textEdit.toPlainText(), self.TaskDue.text(), self.comboBox.currentIndex()]
         self.Tasklist.loc[len(self.Tasklist)] = item
-        # print(self.Tasklist.iat[0][0])
         self.TaskNum += 1
         self.tableWidget.setRowCount(self.TaskNum)
         self.sortTaskList()

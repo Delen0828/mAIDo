@@ -68,6 +68,13 @@ class Window(QWidget, Ui_Form):
 			cell_format.setBackground(PyQt5.QtGui.QColor("grey"))
 			self.calendarWidget.setDateTextFormat(dt, cell_format)
 
+	def deHighLight(self,datelist):
+		for date in datelist:
+			dt = PyQt5.QtCore.QDate.fromString('20'+date.split(' ')[0], "yyyy/MM/d")
+			cell_format = PyQt5.QtGui.QTextCharFormat()
+			cell_format.setBackground(PyQt5.QtGui.QColor("red"))
+			self.calendarWidget.setDateTextFormat(dt, cell_format)
+
 	def add(self):
 		item = {'√': False, 'Task': self.textEdit.toPlainText(), 'Deadline': self.TaskDue.text(),
 				'Priority': self.comboBox.currentIndex()}
@@ -81,15 +88,18 @@ class Window(QWidget, Ui_Form):
 
 	def Delete(self):
 		ind = []
+		datelist=[]
 		if len(self.tableWidget.selectedItems()) != 0:
 			for item in self.tableWidget.selectedItems():
 				i = item.row()
 				ind.append(self.Tasklist.iloc[i].name)
+				datelist.append(self.Tasklist.iloc[i].Deadline)
 			ind = list(set(ind))
 			self.Tasklist = self.Tasklist.drop(ind)
 			self.TaskNum -= len(ind)
 		self.sortTaskList()
 		self.UpdateTable()
+		self.deHighLight(datelist)
 
 
 if __name__ == '__main__':

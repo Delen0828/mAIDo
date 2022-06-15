@@ -10,7 +10,7 @@ import sys
 # import numpy as np
 import pandas as pd
 
-PriorityDict = {0: 'None', 1: '1', 2: '2'}
+PriorityDict = {0: 'NaN', 1: '1', 2: '2'}
 
 
 class Window(QWidget, Ui_Form):
@@ -21,11 +21,11 @@ class Window(QWidget, Ui_Form):
         self.TaskTable()
 
     def TaskTable(self):
-        self.Tasklist = pd.DataFrame(columns=['Tick', 'Task Name', 'Deadline', 'Priority'])
+        self.Tasklist = pd.DataFrame(columns=['Tick', 'TaskName', 'Deadline', 'Priority'])
         self.TaskNum = 0
         self.tableWidget.setRowCount(0)
         self.tableWidget.setColumnCount(4)
-        self.tableWidget.setHorizontalHeaderLabels(['Tick', 'Task Name', 'Deadline', 'Priority'])
+        self.tableWidget.setHorizontalHeaderLabels(['Tick', 'TaskName', 'Deadline', 'Priority'])
 
     def sortTaskList(self):
         self.Tasklist.sort_values(by=['Tick','Priority','Deadline'],ascending=[True,False,True],inplace=True)
@@ -56,7 +56,7 @@ class Window(QWidget, Ui_Form):
         self.UpdateTable()
 
     def add(self):
-        item = {'Tick':False, 'Task Name':self.textEdit.toPlainText(), 'Deadline':self.TaskDue.text(), 'Priority':self.comboBox.currentIndex()}
+        item = {'Tick':False, 'TaskName':self.textEdit.toPlainText(), 'Deadline':self.TaskDue.text(), 'Priority':self.comboBox.currentIndex()}
         self.Tasklist=self.Tasklist.append( item,ignore_index = True)
         self.TaskNum += 1
         self.tableWidget.setRowCount(self.TaskNum)

@@ -1,0 +1,8 @@
+
+QPushButton {
+    text-transform: none;
+}
+QHeaderView::section {
+    text-transform: none;
+}
+

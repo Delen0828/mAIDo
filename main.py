@@ -9,23 +9,27 @@ import sys
 # import functools
 # import numpy as np
 import pandas as pd
+from qt_material import apply_stylesheet
 
-PriorityDict = {0: 'NaN', 1: '1', 2: '2'}
+PriorityDict = {0: 'None', 1: '1', 2: '2'}
 
 
 class Window(QWidget, Ui_Form):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("mAIDo-Demo")
+        self.setWindowIcon(QIcon('icon.ico'))
         self.setupUi(self)
         self.TaskTable()
 
     def TaskTable(self):
-        self.Tasklist = pd.DataFrame(columns=['Tick', 'TaskName', 'Deadline', 'Priority'])
+        self.Tasklist = pd.DataFrame(columns=['Tick', 'Task Name', 'Deadline', 'Priority'])
         self.TaskNum = 0
         self.tableWidget.setRowCount(0)
         self.tableWidget.setColumnCount(4)
-        self.tableWidget.setHorizontalHeaderLabels(['Tick', 'TaskName', 'Deadline', 'Priority'])
+        self.tableWidget.setHorizontalHeaderLabels(['Tick', 'Task Name', 'Deadline', 'Priority'])
+        self.tableWidget.horizontalHeader().setStyleSheet("QHeaderView::section{font:10pt '黑体'}")
+
 
     def sortTaskList(self):
         self.Tasklist.sort_values(by=['Tick','Priority','Deadline'],ascending=[True,False,True],inplace=True)
@@ -56,7 +60,7 @@ class Window(QWidget, Ui_Form):
         self.UpdateTable()
 
     def add(self):
-        item = {'Tick':False, 'TaskName':self.textEdit.toPlainText(), 'Deadline':self.TaskDue.text(), 'Priority':self.comboBox.currentIndex()}
+        item = {'Tick':False, 'Task Name':self.textEdit.toPlainText(), 'Deadline':self.TaskDue.text(), 'Priority':self.comboBox.currentIndex()}
         self.Tasklist=self.Tasklist.append( item,ignore_index = True)
         self.TaskNum += 1
         self.tableWidget.setRowCount(self.TaskNum)
@@ -75,9 +79,13 @@ class Window(QWidget, Ui_Form):
         self.sortTaskList()
         self.UpdateTable()
 
-
 if __name__ == '__main__':
+    QCoreApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
     app = QApplication(sys.argv)
+    apply_stylesheet(app, theme='dark_teal.xml')
+    stylesheet = app.styleSheet()
+    with open('custom.css') as file:
+       app.setStyleSheet(stylesheet + file.read())
     window = Window()
     window.show()
     sys.exit(app.exec_())

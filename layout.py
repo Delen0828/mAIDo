@@ -17,7 +17,7 @@ class Ui_Form(object):
         Form.setObjectName("Form")
         Form.resize(807, 466)
         self.textEdit = QtWidgets.QTextEdit(Form)
-        self.textEdit.setGeometry(QtCore.QRect(430, 30, 220, 30))
+        self.textEdit.setGeometry(QtCore.QRect(430, 30, 220, 35))
         self.textEdit.setObjectName("textEdit")
         self.textEdit.setStyleSheet("font: 10pt \"Calibri\";")
         self.AddButton = QtWidgets.QPushButton(Form)

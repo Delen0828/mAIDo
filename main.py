@@ -22,15 +22,15 @@ class Window(QWidget, Ui_Form):
         self.TaskTable()
 
     def TaskTable(self):
-        self.Tasklist = pd.DataFrame(columns=['Tick', 'Task Name', 'Deadline', 'Priority'])
+        self.Tasklist = pd.DataFrame(columns=['√', 'Task', 'Deadline', 'Priority'])
         self.TaskNum = 0
         self.tableWidget.setRowCount(0)
         self.tableWidget.setColumnCount(4)
-        self.tableWidget.setHorizontalHeaderLabels(['Tick', 'Task Name', 'Deadline', 'Priority'])
-        self.tableWidget.horizontalHeader().setStyleSheet("QHeaderView::section{font:10pt '黑体'}")
+        self.tableWidget.setHorizontalHeaderLabels(['√', 'Task', 'Deadline', 'Priority'])
+        self.tableWidget.horizontalHeader().setStyleSheet("QHeaderView::section{font:10pt \"Calibri\"}")
 
     def sortTaskList(self):
-        self.Tasklist.sort_values(by=['Tick', 'Priority', 'Deadline'], ascending=[True, False, True], inplace=True)
+        self.Tasklist.sort_values(by=['√', 'Priority', 'Deadline'], ascending=[True, False, True], inplace=True)
 
     def UpdateTable(self):
         self.tableWidget.clearContents()
@@ -58,7 +58,7 @@ class Window(QWidget, Ui_Form):
         self.UpdateTable()
 
     def add(self):
-        item = {'Tick': False, 'Task Name': self.textEdit.toPlainText(), 'Deadline': self.TaskDue.text(),
+        item = {'√': False, 'Task': self.textEdit.toPlainText(), 'Deadline': self.TaskDue.text(),
                 'Priority': self.comboBox.currentIndex()}
         self.Tasklist = self.Tasklist.append(item, ignore_index=True)
         self.TaskNum += 1

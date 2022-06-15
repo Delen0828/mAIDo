@@ -1,4 +1,3 @@
-
 from msilib.schema import tables
 from PyQt5.Qt import *
 from PyQt5.QtCore import *
@@ -30,9 +29,8 @@ class Window(QWidget, Ui_Form):
         self.tableWidget.setHorizontalHeaderLabels(['Tick', 'Task Name', 'Deadline', 'Priority'])
         self.tableWidget.horizontalHeader().setStyleSheet("QHeaderView::section{font:10pt '黑体'}")
 
-
     def sortTaskList(self):
-        self.Tasklist.sort_values(by=['Tick','Priority','Deadline'],ascending=[True,False,True],inplace=True)
+        self.Tasklist.sort_values(by=['Tick', 'Priority', 'Deadline'], ascending=[True, False, True], inplace=True)
 
     def UpdateTable(self):
         self.tableWidget.clearContents()
@@ -43,7 +41,7 @@ class Window(QWidget, Ui_Form):
                 if column == 0:
                     checkbox = QCheckBox()
                     checkbox.setStyleSheet('QComboBox{margin:3px};')
-                    checkbox.clicked.connect(self.updateCheck)	#update the click signal to tasklist 
+                    checkbox.clicked.connect(self.updateCheck)  # update the click signal to tasklist
                     checkbox.setChecked(self.Tasklist.iloc[row][column])
                     self.tableWidget.setCellWidget(row, 0, checkbox)
                 elif column == 3:
@@ -55,29 +53,31 @@ class Window(QWidget, Ui_Form):
     def updateCheck(self):
         for i in range(self.TaskNum):
             checkItem = self.tableWidget.cellWidget(i, 0)
-            self.Tasklist.iat[i,0] = checkItem.isChecked()
+            self.Tasklist.iat[i, 0] = checkItem.isChecked()
         self.sortTaskList()
         self.UpdateTable()
 
     def add(self):
-        item = {'Tick':False, 'Task Name':self.textEdit.toPlainText(), 'Deadline':self.TaskDue.text(), 'Priority':self.comboBox.currentIndex()}
-        self.Tasklist=self.Tasklist.append( item,ignore_index = True)
+        item = {'Tick': False, 'Task Name': self.textEdit.toPlainText(), 'Deadline': self.TaskDue.text(),
+                'Priority': self.comboBox.currentIndex()}
+        self.Tasklist = self.Tasklist.append(item, ignore_index=True)
         self.TaskNum += 1
         self.tableWidget.setRowCount(self.TaskNum)
         self.sortTaskList()
         self.UpdateTable()
 
     def Delete(self):
-        ind=[]
-        if len(self.tableWidget.selectedItems())!=0:
+        ind = []
+        if len(self.tableWidget.selectedItems()) != 0:
             for item in self.tableWidget.selectedItems():
-                i=item.row()
+                i = item.row()
                 ind.append(self.Tasklist.iloc[i].name)
-            ind=list(set(ind))
-            self.Tasklist=self.Tasklist.drop(ind)
-            self.TaskNum-=len(ind)
+            ind = list(set(ind))
+            self.Tasklist = self.Tasklist.drop(ind)
+            self.TaskNum -= len(ind)
         self.sortTaskList()
         self.UpdateTable()
+
 
 if __name__ == '__main__':
     QCoreApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
@@ -85,7 +85,7 @@ if __name__ == '__main__':
     apply_stylesheet(app, theme='dark_teal.xml')
     stylesheet = app.styleSheet()
     with open('custom.css') as file:
-       app.setStyleSheet(stylesheet + file.read())
+        app.setStyleSheet(stylesheet + file.read())
     window = Window()
     window.show()
     sys.exit(app.exec_())

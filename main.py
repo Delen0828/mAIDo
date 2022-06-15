@@ -9,7 +9,7 @@ import sys
 # import functools
 # import numpy as np
 import pandas as pd
-
+from qt_material import apply_stylesheet
 PriorityDict = {0: 'NaN', 1: '1', 2: '2'}
 
 
@@ -77,7 +77,12 @@ class Window(QWidget, Ui_Form):
 
 
 if __name__ == '__main__':
+    QCoreApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
     app = QApplication(sys.argv)
+    apply_stylesheet(app, theme='dark_teal.xml')
+    stylesheet = app.styleSheet()
+    with open('custom.css') as file:
+       app.setStyleSheet(stylesheet + file.read())
     window = Window()
     window.show()
     sys.exit(app.exec_())

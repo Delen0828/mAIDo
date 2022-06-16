@@ -21,6 +21,7 @@ class Window(QWidget, Ui_Form):
 		self.setWindowIcon(QIcon('icon.ico'))
 		self.setupUi(self)
 		self.TaskTable()
+		self.datelist=[]#内置日历列表
 
 	def TaskTable(self):
 		self.Tasklist = pd.DataFrame(columns=['√', 'Task', 'Deadline', 'Priority'])
@@ -58,22 +59,27 @@ class Window(QWidget, Ui_Form):
 		self.sortTaskList()
 		self.UpdateTable()
 
-	def highLight(self):
-		datelist=self.Tasklist['Deadline']
-		for date in datelist:
-			# print(date.split(' ')[0])
-			dt = PyQt5.QtCore.QDate.fromString('20'+date.split(' ')[0], "yyyy/MM/d")
+	def highLight(self,dateItem):
+		'''更改dateitem背景 ，将dateitem加入内置日期列表'''
+		self.datelist.append(dateItem)
+		dt = PyQt5.QtCore.QDate.fromString('20' + dateItem.split(' ')[0], "yyyy/MM/d")
 			# print(dt.toString())
-			cell_format = PyQt5.QtGui.QTextCharFormat()
-			cell_format.setBackground(PyQt5.QtGui.QColor("grey"))
-			self.calendarWidget.setDateTextFormat(dt, cell_format)
+		cell_format = self.calendarWidget.dateTextFormat(dt)
+		cell_format.setBackground(PyQt5.QtGui.QColor("grey"))
+		self.calendarWidget.setDateTextFormat(dt, cell_format)
 
-	def deHighLight(self,datelist):
-		for date in datelist:
+
+	def deHighLight(self,date_,deldate_):
+		'''date_:内置日期列表
+		   deldate_:删除选择日期后的日期列表
+		'''
+		dellist=list(set(date_)-set(deldate_)) #获取calendarview更改的item
+		for date in dellist:
 			dt = PyQt5.QtCore.QDate.fromString('20'+date.split(' ')[0], "yyyy/MM/d")
 			cell_format = PyQt5.QtGui.QTextCharFormat()
-			cell_format.setBackground(PyQt5.QtGui.QColor("red"))
+			cell_format.setBackground(QBrush(QColor(0,0,0,1)))#透明背景设置
 			self.calendarWidget.setDateTextFormat(dt, cell_format)
+		self.datelist=deldate_#更新内置日期列表
 
 	def add(self):
 		item = {'√': False, 'Task': self.textEdit.toPlainText(), 'Deadline': self.TaskDue.text(),
@@ -83,23 +89,23 @@ class Window(QWidget, Ui_Form):
 		self.tableWidget.setRowCount(self.TaskNum)
 		self.sortTaskList()
 		self.UpdateTable()
-		self.highLight()
+		self.highLight(self.TaskDue.text())
 
 
 	def Delete(self):
 		ind = []
-		datelist=[]
+		delDateList=[]
 		if len(self.tableWidget.selectedItems()) != 0:
 			for item in self.tableWidget.selectedItems():
 				i = item.row()
 				ind.append(self.Tasklist.iloc[i].name)
-				datelist.append(self.Tasklist.iloc[i].Deadline)
 			ind = list(set(ind))
 			self.Tasklist = self.Tasklist.drop(ind)
 			self.TaskNum -= len(ind)
 		self.sortTaskList()
 		self.UpdateTable()
-		self.deHighLight(datelist)
+		delDateList=self.Tasklist['Deadline'].to_list()#获取删除后的日期列表
+		self.deHighLight(self.datelist,delDateList)
 
 
 if __name__ == '__main__':

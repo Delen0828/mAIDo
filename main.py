@@ -1,3 +1,4 @@
+import os.path
 from msilib.schema import tables
 import PyQt5
 from PyQt5.Qt import *
@@ -10,6 +11,16 @@ import sys
 # import numpy as np
 import pandas as pd
 from qt_material import apply_stylesheet
+
+
+#=============================================  css_content  ==========================================
+addstyle='''QPushButton {
+    text-transform: none;
+}
+QHeaderView::section {
+    text-transform: none;
+}'''
+#=============================================  css_content  ==========================================
 
 PriorityDict = {0: 'NaN', 1: '1', 2: '2'}
 
@@ -53,15 +64,24 @@ class Window(QWidget, Ui_Form):
 					self.tableWidget.setItem(row, column, QTableWidgetItem(self.Tasklist.iloc[row][column]))
 
 	def updateCheck(self):
+		tempdatelist=[]
 		for i in range(self.TaskNum):
 			checkItem = self.tableWidget.cellWidget(i, 0)
 			self.Tasklist.iat[i, 0] = checkItem.isChecked()
+			if checkItem.isChecked()==False:
+				tempdatelist.append(self.Tasklist.iat[i,2].split(' ')[0])
 		self.sortTaskList()
 		self.UpdateTable()
+		if (len(tempdatelist)>len(self.datelist)):
+			self.deHighLight(tempdatelist,self.datelist,1)
+		else:
+			self.deHighLight(self.datelist,tempdatelist)
+		#print (self.datelist)
+		#print(tempdatelist)
 
 	def highLight(self,dateItem):
 		'''更改dateitem背景 ，将dateitem加入内置日期列表'''
-		self.datelist.append(dateItem)
+		self.datelist.append(dateItem.split(' ')[0])
 		dt = PyQt5.QtCore.QDate.fromString('20' + dateItem.split(' ')[0], "yyyy/MM/d")
 			# print(dt.toString())
 		cell_format = self.calendarWidget.dateTextFormat(dt)
@@ -69,17 +89,19 @@ class Window(QWidget, Ui_Form):
 		self.calendarWidget.setDateTextFormat(dt, cell_format)
 
 
-	def deHighLight(self,date_,deldate_):
+	def deHighLight(self,date_,deldate_,add=0):
 		'''date_:内置日期列表
 		   deldate_:删除选择日期后的日期列表
 		'''
-		dellist=list(set(date_)-set(deldate_)) #获取calendarview更改的item
+		choose=[QBrush(QColor(0,0,0,1)),PyQt5.QtGui.QColor("grey")]
+		result=[deldate_,date_]
+		dellist = list(set(date_) - set(deldate_))  # 获取calendarview更改的item
 		for date in dellist:
 			dt = PyQt5.QtCore.QDate.fromString('20'+date.split(' ')[0], "yyyy/MM/d")
 			cell_format = PyQt5.QtGui.QTextCharFormat()
-			cell_format.setBackground(QBrush(QColor(0,0,0,1)))#透明背景设置
+			cell_format.setBackground(choose[add])#透明背景设置
 			self.calendarWidget.setDateTextFormat(dt, cell_format)
-		self.datelist=deldate_#更新内置日期列表
+		self.datelist=result[add]#更新内置日期列表
 
 	def add(self):
 		item = {'√': False, 'Task': self.textEdit.toPlainText(), 'Deadline': self.TaskDue.text(),
@@ -113,8 +135,10 @@ if __name__ == '__main__':
 	app = QApplication(sys.argv)
 	apply_stylesheet(app, theme='dark_teal.xml')
 	stylesheet = app.styleSheet()
-	with open('custom.css') as file:
-		app.setStyleSheet(stylesheet + file.read())
+
+
+	app.setStyleSheet(stylesheet + addstyle)
+
 	window = Window()
 	window.show()
 	sys.exit(app.exec_())

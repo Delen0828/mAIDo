@@ -74,7 +74,7 @@ class Window(QWidget, Ui_Form):
 		self.UpdateTable()
 		if (len(tempdatelist)>len(self.datelist)):
 			self.deHighLight(tempdatelist,self.datelist,1)
-		else:
+		elif (len(tempdatelist)<len(self.datelist)):
 			self.deHighLight(self.datelist,tempdatelist)
 		#print (self.datelist)
 		#print(tempdatelist)
@@ -126,8 +126,7 @@ class Window(QWidget, Ui_Form):
 			self.TaskNum -= len(ind)
 		self.sortTaskList()
 		self.UpdateTable()
-		delDateList=self.Tasklist['Deadline'].to_list()#获取删除后的日期列表
-		self.deHighLight(self.datelist,delDateList)
+		self.updateCheck()
 
 
 if __name__ == '__main__':

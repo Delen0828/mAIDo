@@ -77,7 +77,7 @@ class Ui_Form(object):
         self.comboBox.setItemText(1, _translate("Form", "1"))
         self.comboBox.setItemText(2, _translate("Form", "2"))
         self.comboBox.setItemText(0, _translate("Form", "NaN"))
-        self.label.setText(_translate("Form", "mAIdo"))
+        self.label.setText(_translate("Form", "mAIDo"))
         self.label_2.setText(_translate("Form", "Manage Your Life with AI!"))
 
 

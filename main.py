@@ -33,14 +33,20 @@ class Window(QWidget, Ui_Form):
 		self.setupUi(self)
 		self.TaskTable()
 		self.datelist=[]#内置日历列表
+		self.calendarini()
 
+	def calendarini(self):
+		cell_format=self.calendarWidget.weekdayTextFormat(Qt.Saturday)
+		cell_format.setForeground(PyQt5.QtGui.QColor("white"))
+		self.calendarWidget.setWeekdayTextFormat(Qt.Saturday,cell_format)
+		self.calendarWidget.setWeekdayTextFormat(Qt.Sunday, cell_format)
 	def TaskTable(self):
 		self.Tasklist = pd.DataFrame(columns=['√', 'Task', 'Deadline', 'Priority'])
 		self.TaskNum = 0
 		self.tableWidget.setRowCount(0)
 		self.tableWidget.setColumnCount(4)
 		self.tableWidget.setHorizontalHeaderLabels(['√', 'Task', 'Deadline', 'Priority'])
-		self.tableWidget.horizontalHeader().setStyleSheet("QHeaderView::section{font:10pt \"Calibri\"}")
+		self.tableWidget.horizontalHeader().setStyleSheet("QHeaderView::section{font:13pt \"Calibri\"}")
 
 	def sortTaskList(self):
 		self.Tasklist.sort_values(by=['√', 'Priority', 'Deadline'], ascending=[True, False, True], inplace=True)

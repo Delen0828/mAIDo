@@ -6,7 +6,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from layout import Ui_Form
-
+from edit import EditUi
 import sys
 # import functools
 # import numpy as np
@@ -32,14 +32,28 @@ class MainWindow(QWidget, Ui_Form):
 		self.setWindowTitle("mAIDo-Demo")
 		self.setWindowIcon(QIcon('icon.ico'))
 		self.setupUi(self)
+		self.setFixedSize(self.width(), self.height())
 		self.TaskTable()
 		self.datelist=[]#内置日历列表
 		self.calendarini()
+		self.child=None
 
-
-	def test(self):
-		print('test')
-
+	def TaskTable_Menu(self):
+		self.menu = QMenu()
+		self.actionA = QAction(u'Remove', self)  # 创建菜单选项对象
+		self.menu.addAction(self.actionA)
+		self.actionB = QAction(u'Edit', self)  # 创建菜单选项对象
+		self.menu.addAction(self.actionB)
+		if len(self.tableWidget.selectedItems())==0:
+			self.menu.actions()[0].setEnabled(False)
+			self.menu.actions()[1].setEnabled(False)
+		else:
+			ind = list(set(self.returnDelList()))
+			if len(ind) >1:
+				self.menu.actions()[1].setEnabled(False)
+		self.actionA.triggered.connect(self.Delete)
+		self.actionB.triggered.connect(self.Edit)
+		self.menu.popup(QCursor.pos())
 
 	def calendarini(self):
 		cell_format=self.calendarWidget.weekdayTextFormat(Qt.Saturday)
@@ -61,6 +75,8 @@ class MainWindow(QWidget, Ui_Form):
 	def TaskTable(self):
 		self.Tasklist = pd.DataFrame(columns=['√', 'Task', 'Deadline', 'Priority'])
 		self.TaskNum = 0
+		self.tableWidget.setContextMenuPolicy(Qt.CustomContextMenu)
+		self.tableWidget.customContextMenuRequested.connect(self.TaskTable_Menu)
 		self.tableWidget.setRowCount(0)
 		self.tableWidget.setColumnCount(4)
 		self.tableWidget.setHorizontalHeaderLabels(['√', 'Task', 'Deadline', 'Priority'])
@@ -88,6 +104,7 @@ class MainWindow(QWidget, Ui_Form):
 					self.tableWidget.setItem(row, column, QTableWidgetItem(self.Tasklist.iloc[row][column]))
 
 	def updateCheck(self):
+		#print('a')
 		tempdatelist=[]
 		for i in range(self.TaskNum):
 			checkItem = self.tableWidget.cellWidget(i, 0)
@@ -127,32 +144,68 @@ class MainWindow(QWidget, Ui_Form):
 			self.calendarWidget.setDateTextFormat(dt, cell_format)
 		self.datelist=result[add]#更新内置日期列表
 
-	def add(self):
-		item = {'√': False, 'Task': self.textEdit.toPlainText(), 'Deadline': self.TaskDue.text(),
+	def add(self,Item=None):
+		if Item==None:
+			item = {'√': False, 'Task': self.textEdit.toPlainText(), 'Deadline': self.TaskDue.text(),
 				'Priority': self.comboBox.currentIndex()}
+		else: item=Item
 		self.Tasklist = self.Tasklist.append(item, ignore_index=True)
 		self.TaskNum += 1
 		self.tableWidget.setRowCount(self.TaskNum)
 		self.sortTaskList()
 		self.UpdateTable()
-		self.highLight(self.TaskDue.text())
+		self.highLight(item['Deadline'])
 
-
+	def returnDelList(self):
+		ind = []
+		for item in self.tableWidget.selectedItems():
+			i = item.row()
+			ind.append(self.Tasklist.iloc[i].name)
+		return ind
 	def Delete(self):
 		ind = []
-		delDateList=[]
 		if len(self.tableWidget.selectedItems()) != 0:
-			for item in self.tableWidget.selectedItems():
-				i = item.row()
-				ind.append(self.Tasklist.iloc[i].name)
-			ind = list(set(ind))
+			ind = list(set(self.returnDelList()))
 			self.Tasklist = self.Tasklist.drop(ind)
 			self.TaskNum -= len(ind)
 		self.sortTaskList()
 		self.UpdateTable()
 		self.updateCheck()
 
+	def Edit(self):
+		self.setEnabled(False)
+		self.setFocusPolicy(Qt.NoFocus)
+		self.child = EditLogic(self)
+		self.child.show()
+	def closeEvent(self,event):
+		if self.child!=None:
+			self.child.close()
 
+
+#==================================================================================================
+#edit 窗口
+class EditLogic(QWidget,EditUi):
+	def __init__(self,parent):
+		super().__init__()
+		self.setWindowTitle("Edit a task")
+		self.setWindowIcon(QIcon('icon.ico'))
+		self.setupUi(self)
+		self.setFixedSize(self.width(), self.height())
+		self.parentWidget=parent
+		self.setWindowFlags(Qt.WindowStaysOnTopHint)
+		self.ConfirmEditButton.clicked.connect(self.edit)
+	def edit(self):
+		item = {'√': False, 'Task': self.textEdit.toPlainText(), 'Deadline': self.dateTimeEdit.text(),
+				'Priority': self.comboBox.currentIndex()}
+		self.parentWidget.Delete()
+		self.parentWidget.add(item)
+		self.close()
+		#print(self.parentWidget.Tasklist)
+		#print(self.parentWidget.datelist)
+	def closeEvent(self,event):
+		pass
+		self.parentWidget.setFocusPolicy(Qt.StrongFocus)
+		self.parentWidget.setEnabled(True)
 if __name__ == '__main__':
 	QCoreApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
 	app = QApplication(sys.argv)

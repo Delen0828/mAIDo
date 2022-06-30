@@ -69,3 +69,4 @@ class Ui_Form(object):
         self.comboBox.setItemText(2, _translate("Form", "None"))
         self.label.setText(_translate("Form", "mAIdo"))
         self.label_2.setText(_translate("Form", "Manage Your Life with the Power of AI!!"))
+

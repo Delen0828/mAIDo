@@ -1,3 +1,11 @@
+# python cache file
+/__pycache__/
+
+# development environment file
+/.idea/
+/.vscode/
+
+# miscellaneous
 build/
 dist/
 *.xml

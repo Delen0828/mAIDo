@@ -65,7 +65,7 @@ class Ui_Form(object):
         self.calendarWidget.setHorizontalHeaderFormat(QtWidgets.QCalendarWidget.HorizontalHeaderFormat.LongDayNames)
 
         #self.calendarWidget.setNavigationBarVisible(0)
-        self.calendarWidget.setSelectionMode(0)
+        self.calendarWidget.setSelectionMode(QtWidgets.QCalendarWidget.SelectionMode.SingleSelection)
         # self.calendarWidget.ShowToday()
 
 
@@ -77,9 +77,9 @@ class Ui_Form(object):
         Form.setWindowTitle(_translate("Form", "mAIDo-demo"))
         self.AddButton.setText(_translate("Form", "Add"))
         self.DeleteButton.setText(_translate("Form", "Remove"))
-        self.comboBox.setItemText(1, _translate("Form", "1"))
-        self.comboBox.setItemText(2, _translate("Form", "2"))
-        self.comboBox.setItemText(0, _translate("Form", "NaN"))
+        self.comboBox.setItemText(1, _translate("Form", "Avg"))
+        self.comboBox.setItemText(2, _translate("Form", "High"))
+        self.comboBox.setItemText(0, _translate("Form", "Low"))
         self.label.setText(_translate("Form", "mAIDo"))
         self.label_2.setText(_translate("Form", "Manage Your Life with AI!"))
 

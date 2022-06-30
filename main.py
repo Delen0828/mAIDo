@@ -6,6 +6,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from layout import Ui_Form
+
 import sys
 # import functools
 # import numpy as np
@@ -22,10 +23,10 @@ QHeaderView::section {
 }'''
 #=============================================  css_content  ==========================================
 
-PriorityDict = {0: 'NaN', 1: '1', 2: '2'}
+PriorityDict = {0: 'Low', 1: 'Avg', 2: 'High'}
 
 
-class Window(QWidget, Ui_Form):
+class MainWindow(QWidget, Ui_Form):
 	def __init__(self):
 		super().__init__()
 		self.setWindowTitle("mAIDo-Demo")
@@ -35,11 +36,28 @@ class Window(QWidget, Ui_Form):
 		self.datelist=[]#内置日历列表
 		self.calendarini()
 
+
+	def test(self):
+		print('test')
+
+
 	def calendarini(self):
 		cell_format=self.calendarWidget.weekdayTextFormat(Qt.Saturday)
 		cell_format.setForeground(PyQt5.QtGui.QColor("white"))
 		self.calendarWidget.setWeekdayTextFormat(Qt.Saturday,cell_format)
 		self.calendarWidget.setWeekdayTextFormat(Qt.Sunday, cell_format)
+		self.calendarWidget.setMinimumDate(QDate.currentDate().addDays(-5))
+		self.calendarWidget.setMaximumDate(QDate.currentDate().addDays(31))
+		cell_format = self.calendarWidget.dateTextFormat(QDate.currentDate())
+		cell_format.setForeground(PyQt5.QtGui.QColor("grey"))
+		date=QDate.currentDate().addDays(-40)
+		while date!=QDate.currentDate().addDays(-5):
+			self.calendarWidget.setDateTextFormat(date,cell_format)
+			date=date.addDays(1)
+		date=QDate.currentDate().addDays(31)
+		while date != QDate.currentDate().addDays(60):
+			self.calendarWidget.setDateTextFormat(date, cell_format)
+			date = date.addDays(1)
 	def TaskTable(self):
 		self.Tasklist = pd.DataFrame(columns=['√', 'Task', 'Deadline', 'Priority'])
 		self.TaskNum = 0
@@ -140,10 +158,10 @@ if __name__ == '__main__':
 	app = QApplication(sys.argv)
 	apply_stylesheet(app, theme='dark_teal.xml')
 	stylesheet = app.styleSheet()
-
+	#print(stylesheet)
 
 	app.setStyleSheet(stylesheet + addstyle)
 
-	window = Window()
+	window = MainWindow()
 	window.show()
 	sys.exit(app.exec_())

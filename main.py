@@ -72,6 +72,7 @@ class MainWindow(QWidget, Ui_Form):
 		while date != QDate.currentDate().addDays(60):
 			self.calendarWidget.setDateTextFormat(date, cell_format)
 			date = date.addDays(1)
+	
 	def TaskTable(self):
 		self.Tasklist = pd.DataFrame(columns=['√', 'Task', 'Deadline', 'Priority'])
 		self.TaskNum = 0
@@ -117,18 +118,15 @@ class MainWindow(QWidget, Ui_Form):
 			self.deHighLight(tempdatelist,self.datelist,1)
 		elif (len(tempdatelist)<len(self.datelist)):
 			self.deHighLight(self.datelist,tempdatelist)
-		#print (self.datelist)
-		#print(tempdatelist)
 
 	def highLight(self,dateItem):
-		'''更改dateitem背景 ，将dateitem加入内置日期列表'''
+		'''更改dateitem背景 ,将dateitem加入内置日期列表'''
 		self.datelist.append(dateItem.split(' ')[0])
 		dt = PyQt5.QtCore.QDate.fromString('20' + dateItem.split(' ')[0], "yyyy/MM/d")
 			# print(dt.toString())
 		cell_format = self.calendarWidget.dateTextFormat(dt)
 		cell_format.setBackground(PyQt5.QtGui.QColor("grey"))
 		self.calendarWidget.setDateTextFormat(dt, cell_format)
-
 
 	def deHighLight(self,date_,deldate_,add=0):
 		'''date_:内置日期列表
@@ -155,6 +153,7 @@ class MainWindow(QWidget, Ui_Form):
 		self.sortTaskList()
 		self.UpdateTable()
 		self.highLight(item['Deadline'])
+		self.saveTaskList()
 
 	def returnDelList(self):
 		ind = []
@@ -162,6 +161,7 @@ class MainWindow(QWidget, Ui_Form):
 			i = item.row()
 			ind.append(self.Tasklist.iloc[i].name)
 		return ind
+	
 	def Delete(self):
 		ind = []
 		if len(self.tableWidget.selectedItems()) != 0:
@@ -171,16 +171,20 @@ class MainWindow(QWidget, Ui_Form):
 		self.sortTaskList()
 		self.UpdateTable()
 		self.updateCheck()
-
+		self.saveTaskList()
+		
 	def Edit(self):
 		self.setEnabled(False)
 		self.setFocusPolicy(Qt.NoFocus)
 		self.child = EditLogic(self)
 		self.child.show()
+	
 	def closeEvent(self,event):
 		if self.child!=None:
 			self.child.close()
 
+	def saveTaskList(self):
+		self.Tasklist.to_csv(r'data/task.csv')
 
 #==================================================================================================
 #edit 窗口
@@ -206,6 +210,8 @@ class EditLogic(QWidget,EditUi):
 		pass
 		self.parentWidget.setFocusPolicy(Qt.StrongFocus)
 		self.parentWidget.setEnabled(True)
+
+
 if __name__ == '__main__':
 	QCoreApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
 	app = QApplication(sys.argv)

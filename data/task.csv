@@ -1,1 +1,7 @@
-,√,Task,Deadline,Priority
+√,Task,Deadline,Priority
+False,task1,22/07/02 09:00,0
+False,task2,22/07/02 10:00,0
+False,task3,22/07/02 14:00,0
+False,task4,22/07/02 16:00,0
+False,task4,22/07/02 18:00,0
+False,err1,22/07/03 10:00,0

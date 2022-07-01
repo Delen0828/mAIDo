@@ -99,8 +99,7 @@ class MainWindow(QWidget, Ui_Form):
 					checkbox.setChecked(self.Tasklist.iloc[row][column])
 					self.tableWidget.setCellWidget(row, 0, checkbox)
 				elif column == 3:
-					self.tableWidget.setItem(row, column,
-											 QTableWidgetItem(PriorityDict[self.Tasklist.iloc[row][column]]))
+					self.tableWidget.setItem(row, column, QTableWidgetItem(PriorityDict[self.Tasklist.iloc[row][column]]))
 				else:
 					self.tableWidget.setItem(row, column, QTableWidgetItem(self.Tasklist.iloc[row][column]))
 
@@ -172,7 +171,7 @@ class MainWindow(QWidget, Ui_Form):
 		self.UpdateTable()
 		self.updateCheck()
 		self.saveTaskList()
-		
+
 	def Edit(self):
 		self.setEnabled(False)
 		self.setFocusPolicy(Qt.NoFocus)
@@ -184,7 +183,14 @@ class MainWindow(QWidget, Ui_Form):
 			self.child.close()
 
 	def saveTaskList(self):
-		self.Tasklist.to_csv(r'data/task.csv')
+		self.Tasklist.to_csv(r'data/task.csv',index=False)
+
+	def loadTaskList(self):
+		self.Tasklist=pd.read_csv(r'data/task.csv')
+		print(self.Tasklist)
+		self.sortTaskList()
+		self.UpdateTable()
+		self.updateCheck()
 
 #==================================================================================================
 #edit 窗口

@@ -186,11 +186,13 @@ class MainWindow(QWidget, Ui_Form):
 		self.Tasklist.to_csv(r'data/task.csv',index=False)
 
 	def loadTaskList(self):
-		self.Tasklist=pd.read_csv(r'data/task.csv')
-		print(self.Tasklist)
-		self.sortTaskList()
-		self.UpdateTable()
-		self.updateCheck()
+		loadTasklist=pd.read_csv(r'data/task.csv')
+		for _,row in loadTasklist.iterrows():
+			print(row.tolist())
+			item = {'√': row[0], 'Task': row[1], 'Deadline': row[2],
+					'Priority': row[3]}
+			self.add(item)
+		#print(self.Tasklist)
 
 #==================================================================================================
 #edit 窗口

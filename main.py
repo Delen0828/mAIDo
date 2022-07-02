@@ -15,12 +15,14 @@ from qt_material import apply_stylesheet
 
 
 #=============================================  css_content  ==========================================
-addstyle='''QPushButton {
+addstyle='''
+QPushButton {
     text-transform: none;
 }
 QHeaderView::section {
     text-transform: none;
-}'''
+}
+'''
 #=============================================  css_content  ==========================================
 
 PriorityDict = {0: 'Low', 1: 'Avg', 2: 'High'}
@@ -57,23 +59,14 @@ class MainWindow(QWidget, Ui_Form):
 
 	def calendarini(self):
 		self.calendarWidget.setLocale(QLocale(QLocale.English))
+		self.calendarWidget.setSelectedDate(QDate.currentDate())
+		self.calendarWidget.setFirstDayOfWeek(Qt.Monday)
 		cell_format=self.calendarWidget.weekdayTextFormat(Qt.Saturday)
 		cell_format.setForeground(PyQt5.QtGui.QColor("white"))
 		self.calendarWidget.setWeekdayTextFormat(Qt.Saturday,cell_format)
 		self.calendarWidget.setWeekdayTextFormat(Qt.Sunday, cell_format)
-		self.calendarWidget.setMinimumDate(QDate.currentDate().addDays(-5))
+		self.calendarWidget.setMinimumDate(QDate.currentDate().addDays(0))
 		self.calendarWidget.setMaximumDate(QDate.currentDate().addDays(31))
-		cell_format = self.calendarWidget.dateTextFormat(QDate.currentDate())
-		cell_format.setForeground(PyQt5.QtGui.QColor("grey"))
-		date=QDate.currentDate().addDays(-40)
-		while date!=QDate.currentDate().addDays(-5):
-			self.calendarWidget.setDateTextFormat(date,cell_format)
-			date=date.addDays(1)
-		date=QDate.currentDate().addDays(31)
-		while date != QDate.currentDate().addDays(60):
-			self.calendarWidget.setDateTextFormat(date, cell_format)
-			date = date.addDays(1)
-	
 	def TaskTable(self):
 		self.Tasklist = pd.DataFrame(columns=['√', 'Task', 'Deadline', 'Priority'])
 		self.TaskNum = 0
@@ -144,7 +137,7 @@ class MainWindow(QWidget, Ui_Form):
 
 	def add(self,Item=None):
 		if Item==None:
-			item = {'√': False, 'Task': self.textEdit.toPlainText(), 'Deadline': self.TaskDue.text(),
+			item = {'√': False, 'Task': str(self.textEdit.toPlainText()), 'Deadline': self.TaskDue.text(),
 				'Priority': self.comboBox.currentIndex()}
 		else: item=Item
 		self.Tasklist = self.Tasklist.append(item, ignore_index=True)
@@ -153,7 +146,7 @@ class MainWindow(QWidget, Ui_Form):
 		self.sortTaskList()
 		self.UpdateTable()
 		self.highLight(item['Deadline'])
-		self.saveTaskList()
+
 
 	def returnDelList(self):
 		ind = []
@@ -171,7 +164,7 @@ class MainWindow(QWidget, Ui_Form):
 		self.sortTaskList()
 		self.UpdateTable()
 		self.updateCheck()
-		self.saveTaskList()
+		#self.saveTaskList()
 
 	def Edit(self):
 		self.setEnabled(False)
@@ -182,6 +175,7 @@ class MainWindow(QWidget, Ui_Form):
 	def closeEvent(self,event):
 		if self.child!=None:
 			self.child.close()
+		self.saveTaskList()
 
 	def saveTaskList(self):
 		self.Tasklist.to_csv(r'data/task.csv',index=False)
@@ -189,8 +183,8 @@ class MainWindow(QWidget, Ui_Form):
 	def loadTaskList(self):
 		loadTasklist=pd.read_csv(r'data/task.csv')
 		for _,row in loadTasklist.iterrows():
-			print(row.tolist())
-			item = {'√': row[0], 'Task': row[1], 'Deadline': row[2],
+			#print(row.tolist())
+			item = {'√': row[0], 'Task': str(row[1]), 'Deadline': row[2],
 					'Priority': row[3]}
 			self.add(item)
 		#print(self.Tasklist)
@@ -208,7 +202,7 @@ class EditLogic(QWidget,EditUi):
 		self.setWindowFlags(Qt.WindowStaysOnTopHint)
 		self.ConfirmEditButton.clicked.connect(self.edit)
 	def edit(self):
-		item = {'√': False, 'Task': self.textEdit.toPlainText(), 'Deadline': self.dateTimeEdit.text(),
+		item = {'√': False, 'Task': str(self.textEdit.toPlainText()), 'Deadline': self.dateTimeEdit.text(),
 				'Priority': self.comboBox.currentIndex()}
 		self.parentWidget.Delete()
 		self.parentWidget.add(item)

@@ -30,7 +30,7 @@ class Ui_Form(object):
 		self.loadButton.setObjectName("loadButton")
 		self.TaskDue = QtWidgets.QDateTimeEdit(QDateTime.currentDateTime(), Form)
 		self.TaskDue.setGeometry(QtCore.QRect(550, 140, 221, 41))
-		self.TaskDue.setDisplayFormat('yy/MM/dd hh:mm')
+		self.TaskDue.setDisplayFormat('yyyy-MM-dd hh:mm')
 		self.TaskDue.setObjectName("dateTimeEdit")
 		self.TaskDue.setStyleSheet("font: 13pt \"Calibri\";")
 		self.comboBox = QtWidgets.QComboBox(Form)

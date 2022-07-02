@@ -56,6 +56,7 @@ class MainWindow(QWidget, Ui_Form):
 		self.menu.popup(QCursor.pos())
 
 	def calendarini(self):
+		self.calendarWidget.setLocale(QLocale(QLocale.English))
 		cell_format=self.calendarWidget.weekdayTextFormat(Qt.Saturday)
 		cell_format.setForeground(PyQt5.QtGui.QColor("white"))
 		self.calendarWidget.setWeekdayTextFormat(Qt.Saturday,cell_format)

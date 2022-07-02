@@ -12,7 +12,7 @@ import sys
 # import numpy as np
 import pandas as pd
 from qt_material import apply_stylesheet
-
+from encrypt import *
 
 #=============================================  css_content  ==========================================
 addstyle='''
@@ -24,7 +24,10 @@ QHeaderView::section {
 }
 '''
 #=============================================  css_content  ==========================================
-
+key=b'\xc2\xb5a\x87\xb4\x90\xb9\xa7\xb5\x9a\xfc\xa1\x89&\xfa\xbd\xdc\x15\x16\x87\x97\xd8\xfc\x8e\xef\xd5\xd2\x98\xc0yQ7'
+iv=b'\xfd\xa2\x1d8\xe9\xc3z3\x1fs\x91$\xc0\xb1\x9a\xc4'
+path=os.path.join(os.getcwd(),'data','task.csv')
+pathtxt=os.path.join(os.getcwd(),'data','task.txt')
 PriorityDict = {0: 'Low', 1: 'Avg', 2: 'High'}
 
 
@@ -39,6 +42,9 @@ class MainWindow(QWidget, Ui_Form):
 		self.datelist=[]#内置日历列表
 		self.calendarini()
 		self.child=None
+		self.Username=None
+		self.Pass=None
+		self.otherStoredTasks=None
 
 	def TaskTable_Menu(self):
 		self.menu = QMenu()
@@ -96,7 +102,6 @@ class MainWindow(QWidget, Ui_Form):
 					self.tableWidget.setItem(row, column, QTableWidgetItem(PriorityDict[self.Tasklist.iloc[row][column]]))
 				else:
 					self.tableWidget.setItem(row, column, QTableWidgetItem(self.Tasklist.iloc[row][column]))
-
 	def updateCheck(self):
 		#print('a')
 		tempdatelist=[]
@@ -178,14 +183,22 @@ class MainWindow(QWidget, Ui_Form):
 		self.saveTaskList()
 
 	def saveTaskList(self):
-		self.Tasklist.to_csv(r'data/task.csv',index=False)
+		dict={'Username':self.Username,'Password':self.Pass,'√': None, 'Task': None, 'Deadline': None,
+					'Priority': None}
+		Emptydf=pd.DataFrame([dict])
+		self.Tasklist.insert(0,'Password',self.Pass)
+		self.Tasklist.insert(0,'Username',self.Username)
+		df = pd.concat([self.otherStoredTasks,Emptydf,self.Tasklist])
+		#print(self.otherStoredTasks)
+		df.to_csv(r'data/task.csv',index=False)
+		encrypt(path,key,iv)
 
-	def loadTaskList(self):
-		loadTasklist=pd.read_csv(r'data/task.csv')
+	def loadTaskList(self,df):
+		loadTasklist=df
 		for _,row in loadTasklist.iterrows():
 			#print(row.tolist())
-			item = {'√': row[0], 'Task': str(row[1]), 'Deadline': row[2],
-					'Priority': row[3]}
+			item = {'√': row[2], 'Task': str(row[3]), 'Deadline': row[4],
+					'Priority': row[5]}
 			self.add(item)
 		#print(self.Tasklist)
 
@@ -210,7 +223,6 @@ class EditLogic(QWidget,EditUi):
 		#print(self.parentWidget.Tasklist)
 		#print(self.parentWidget.datelist)
 	def closeEvent(self,event):
-		pass
 		self.parentWidget.setFocusPolicy(Qt.StrongFocus)
 		self.parentWidget.setEnabled(True)
 

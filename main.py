@@ -183,16 +183,16 @@ class MainWindow(QWidget, Ui_Form):
 		self.saveTaskList()
 
 	def saveTaskList(self):
-		dict={'Username':self.Username,'Password':self.Pass,'√': None, 'Task': None, 'Deadline': None,
-					'Priority': None}
+		dict={'Username':str(self.Username),'Password':self.Pass,'√': False, 'Task': '', 'Deadline': '',
+					'Priority': -1}
 		Emptydf=pd.DataFrame([dict])
 		self.Tasklist.insert(0,'Password',self.Pass)
-		self.Tasklist.insert(0,'Username',self.Username)
+		self.Tasklist.insert(0,'Username',str(self.Username))
 		df = pd.concat([self.otherStoredTasks,Emptydf,self.Tasklist])
 		#print(self.otherStoredTasks)
+		df.fillna('',inplace=True)
 		df.to_csv(r'data/task.csv',index=False)
 		encrypt(path,key,iv)
-
 	def loadTaskList(self,df):
 		loadTasklist=df
 		for _,row in loadTasklist.iterrows():

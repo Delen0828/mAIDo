@@ -52,9 +52,9 @@ class LoginWindowLogic(QWidget, Login_Ui_Form):
 
 
     def load(self,username,passWord,list):
-        loadTasklist = list
-        otherTasks = loadTasklist[loadTasklist['Username'] != str(username)]
-        loadTasklist=loadTasklist[loadTasklist['Username']==str(username)]
+
+        otherTasks = list[list['Username'] != str(username)]
+        loadTasklist=list[list['Username']==str(username)]
         #print(loadTasklist)
         loadTasklist.drop(loadTasklist.index[0],inplace=True)
         if len(loadTasklist)>0:
@@ -72,7 +72,7 @@ class LoginWindowLogic(QWidget, Login_Ui_Form):
         username=str(self.UserNameTextEdit.toPlainText())
         plainPass=str(self.passWordTextEdit.toPlainText())
         loadTasklist = pd.read_csv(r'data/task.csv')
-
+        loadTasklist.fillna('',inplace=True)
         userlist=loadTasklist['Username'].astype('str').tolist()
         shal1 = hashlib.sha1()
         data = plainPass
@@ -96,7 +96,7 @@ class LoginWindowLogic(QWidget, Login_Ui_Form):
             if plainPass=='':
                 self.messageDialog('EmptyPass')
             else:
-                newItem={'Username':str(username),'Password':str(shalPass),'√':None,'Task':None,'Deadline':None,'Priority':None}
+                newItem={'Username':str(username),'Password':str(shalPass),'√':False,'Task':'','Deadline':'','Priority':-1}
                 loadTasklist=loadTasklist.append(newItem,ignore_index=True)
                 loadTasklist.to_csv(r'data/task.csv', index=False)
                 self.messageDialog('reg')

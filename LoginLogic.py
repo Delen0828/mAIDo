@@ -60,7 +60,7 @@ class LoginWindowLogic(QWidget, Login_Ui_Form):
         if len(loadTasklist)>0:
             loadTasklist['Task']=loadTasklist['Task'].astype(np.str)
             loadTasklist['√']=loadTasklist['√'].astype('bool')
-            loadTasklist['Priority']=loadTasklist['Priority'].astype('int')
+            loadTasklist['Priority']=loadTasklist['Priority'].astype(np.int)
             self.Mainwindow.loadTaskList(loadTasklist)
         self.Mainwindow.otherStoredTasks=otherTasks.copy()
         self.Mainwindow.Username=username

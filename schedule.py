@@ -9,7 +9,8 @@ maxWorkLoad=8
 def isToday(Tasklist):
 	flagList=[]
 	for item in Tasklist:
-		flagList.append(item.split(' ')[0]=="22/07/05")
+		flagList.append(item.split(' ')[0]==time.strftime('%y/%m/%d',time.localtime()))
+	# print(flagList)
 	return flagList
 
 def getHour(time):
@@ -31,12 +32,25 @@ def getScore(Tasklist):
 def schedule(Tasklist, maxWorkLoad):
 	dueToday=Tasklist[isToday(Tasklist['Deadline'])]
 	wkldToday=dueToday["Workload"].sum()
+	outTask=dueToday
+	# print(wkldToday)
 	if wkldToday>=maxWorkLoad:
-		return dueToday
-	# else:
-		# otherWork=Tasklist[(not isToday(Tasklist['Deadline'])) and (Tasklist['Workload'].apply(lambda x:int(x))<(maxWorkLoad-wkldToday))] #should repeat many times
-		# print(otherWork)
-	print(wkldToday)
+		return outTask
+	else:
+		timediff=maxWorkLoad-wkldToday
+		today=time.strftime('%y/%m/%d',time.localtime())
+		datelist=np.array(Tasklist['Deadline'].str.split(' ').to_list())[:,0]
+		notTodayList=pd.Series(list(datelist!=[today]*len(datelist)))
+		otherWork=Tasklist[Tasklist['Workload']<=timediff * notTodayList].sort_values('Score',ascending=False)
+		while timediff>0:
+			# print(otherWork)
+			otherWork.reset_index(inplace=True)
+			best=otherWork.drop(0)
+			outTask.append(best)
+			# print(best)
+			timediff-=int(best['Workload'])
+		# print(outTask)
+	
 
 Namelist=Tasklist['Task'].to_list()
 DueDict={}

@@ -8,5 +8,9 @@ pass:111
 user:1
 pass:1
 
+安装pycryptodome==3.15.0
+pip install pycryptodome==3.15.0
+
 如果用户名第一次输入会自动注册
 查看解密csv： 在encrypt.py的main 中调用decrypt 然后运行encrypt.py即可。 注意解密完以后要重新加密（main 中调用 encrypt）回去
+

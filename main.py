@@ -142,7 +142,7 @@ class MainWindow(QWidget, Ui_Form):
 
 	def add(self,Item=None):
 		if Item==None:
-			item = {'√': False, 'Task': str(self.textEdit.toPlainText()), 'Deadline': self.TaskDue.text(),
+			item = {'√': False, 'Task': str(self.textEdit.toPlainText()), 'Deadline': self.comboBox_year.currentText()[2:4]+"/"+self.comboBox_month.currentText()+"/"+self.comboBox_day.currentText()+"/"+self.comboBox_hour.currentText()+"/"+self.comboBox_minute.currentText(),
 				'Priority': self.comboBox.currentIndex()}
 		else: item=Item
 		self.Tasklist = self.Tasklist.append(item, ignore_index=True)

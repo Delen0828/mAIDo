@@ -26,9 +26,10 @@ def getScore(Tasklist):
 	timeDiffList=[]
 	for ddl in Tasklist['Deadline']:
 		timeDiffList.append(getTimeDiff(ddl))
-	Tasklist['Score']=np.exp(Tasklist['Priority'])*Tasklist['Workload']*(1/pd.Series(timeDiffList))
+	Tasklist['Score']=(1+Tasklist['Priority'])*Tasklist['Workload']*(1/pd.Series(timeDiffList))
 	
 def filterTask(Tasklist, maxWorkLoad):
+	# print(Tasklist)
 	dueToday=Tasklist[isToday(Tasklist['Deadline'])]
 	wkldToday=dueToday["Workload"].sum()
 	outTask=dueToday
@@ -38,7 +39,7 @@ def filterTask(Tasklist, maxWorkLoad):
 		today=time.strftime('%y/%m/%d',time.localtime())
 		datelist=np.array(Tasklist['Deadline'].str.split(' ').to_list())[:,0]
 		notTodayList=pd.Series(list(datelist!=[today]*len(datelist)))
-		otherWork=Tasklist[Tasklist['Workload']<=timediff * notTodayList].sort_values('Score',ascending=False)
+		otherWork=Tasklist[Tasklist['Workload']<=timediff * notTodayList].reset_index(drop=True).sort_values('Score',ascending=False)
 		while timediff>0 and len(otherWork)>0:
 			# print(otherWork)
 			best,bestIndex=otherWork.iloc[0],otherWork.index.to_list()[0]

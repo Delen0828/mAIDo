@@ -231,7 +231,12 @@ class MainWindow(QWidget, Ui_Form):
 			self.add(item)
 		#print(self.Tasklist)
 	def generateSchedule(self):
-		self.schedule=schedule(filterTask(self.Tasklist,maxWorkLoad=8))
+		# print(self.Tasklist)
+		tempTaskList=self.Tasklist.copy()
+		getScore(tempTaskList)
+		print(tempTaskList)
+		self.schedule=schedule(filterTask(tempTaskList,maxWorkLoad=8))
+		print(tempTaskList,self.schedule)
 
 
 #==================================================================================================

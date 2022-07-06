@@ -25,11 +25,13 @@ class Ui_Form(object):
 		self.AddButton.setObjectName("AddButton")
 		self.AddButton.setStyleSheet("font:12pt \"Calibri\";")
 		self.loadButton = QtWidgets.QPushButton(Form)
-
 		self.loadButton.setGeometry(QtCore.QRect(460, 80, 70, 41))
 		self.loadButton.setStyleSheet("font: 12pt \"Calibri\";")
 		self.loadButton.setObjectName("loadButton")
-
+		self.generateButton = QtWidgets.QPushButton(Form)
+		self.generateButton.setGeometry(QtCore.QRect(50, 50, 50, 50))
+		self.generateButton.setStyleSheet("font: 12pt \"Calibri\";")
+		self.generateButton.setObjectName("generateButton")
 		#self.TaskDue = QtWidgets.QDateTimeEdit(QDateTime.currentDateTime(), Form)
 		#self.TaskDue.setGeometry(QtCore.QRect(550, 140, 221, 41))
 		#self.TaskDue.setDisplayFormat('yy/MM/dd hh:mm')
@@ -65,19 +67,19 @@ class Ui_Form(object):
 		self.comboBox_day.setGeometry(QtCore.QRect(600, 140, 50, 41))
 		self.comboBox_day.setObjectName("Day")
 		for i in range(1,32):
-		   self.comboBox_day.addItem(str(i))
+			self.comboBox_day.addItem(str(i))
 
 		self.comboBox_hour=QtWidgets.QComboBox(Form)
 		self.comboBox_hour.setGeometry(QtCore.QRect(660, 140, 50, 41))
 		self.comboBox_hour.setObjectName("Hour")
 		for i in range(0,24):
-		   self.comboBox_hour.addItem(str(i))
+			self.comboBox_hour.addItem(str(i))
 
 		self.comboBox_minute=QtWidgets.QComboBox(Form)
 		self.comboBox_minute.setGeometry(QtCore.QRect(720, 140, 50, 41))
 		self.comboBox_minute.setObjectName("Minute")
 		for i in range(0,60):
-		   self.comboBox_minute.addItem(str(i))
+			self.comboBox_minute.addItem(str(i))
 		
 		self.comboBox = QtWidgets.QComboBox(Form)
 		self.comboBox.setGeometry(QtCore.QRect(786, 140, 71, 41))
@@ -119,6 +121,7 @@ class Ui_Form(object):
 		#self.loadButton.clicked.connect(lambda: Form.loadTaskList())
 		self.tableWidget.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
 		self.datetasklistWidget.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+		self.generateButton.clicked.connect(lambda: Form.generateSchedule())
 		self.retranslateUi(Form)
 		QtCore.QMetaObject.connectSlotsByName(Form)
 

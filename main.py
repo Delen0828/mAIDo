@@ -9,10 +9,12 @@ from layout import Ui_Form
 from edit import EditUi
 import sys
 # import functools
-# import numpy as np
+import numpy as np
+from datetime import date
 import pandas as pd
 from qt_material import apply_stylesheet
 from encrypt import *
+from schedule import *
 
 #=============================================  css_content  ==========================================
 addstyle='''
@@ -201,6 +203,9 @@ class MainWindow(QWidget, Ui_Form):
 					'Priority': row[5]}
 			self.add(item)
 		#print(self.Tasklist)
+	def generateSchedule(self):
+		self.schedule=schedule(filterTask(self.Tasklist,maxWorkLoad=8))
+
 
 #==================================================================================================
 #edit 窗口

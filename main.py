@@ -39,6 +39,8 @@ class MainWindow(QWidget, Ui_Form):
 		self.setupUi(self)
 		self.setFixedSize(self.width(), self.height())
 		self.TaskTable()
+		self.Comboini()
+		self.test()
 		self.datelist=[]#内置日历列表
 		self.calendarini()
 		self.child=None
@@ -46,6 +48,20 @@ class MainWindow(QWidget, Ui_Form):
 		self.Pass=None
 		self.otherStoredTasks=None
 
+
+
+
+	def test(self):
+		dt = PyQt5.QtCore.QDate.fromString('2022/06/30','yyyy/MM/d')
+		print(dt.isValid())
+		print (dt)
+	def Comboini(self):
+		date=QDate.currentDate()
+		time=QTime.currentTime()
+		self.comboBox_year.setCurrentText(str(date.year()))
+		self.comboBox_month.setCurrentText(str(date.month()).zfill(2))
+		self.comboBox_day.setCurrentText(str(date.day()).zfill(2))
+		self.comboBox_hour.setCurrentText(str(time.hour()).zfill(2))
 	def TaskTable_Menu(self):
 		self.menu = QMenu()
 		self.actionA = QAction(u'Remove', self)  # 创建菜单选项对象
@@ -74,13 +90,13 @@ class MainWindow(QWidget, Ui_Form):
 		self.calendarWidget.setMinimumDate(QDate.currentDate().addDays(0))
 		self.calendarWidget.setMaximumDate(QDate.currentDate().addDays(31))
 	def TaskTable(self):
-		self.Tasklist = pd.DataFrame(columns=['√', 'Task', 'Deadline', 'Priority'])
+		self.Tasklist = pd.DataFrame(columns=['√', 'Task', 'Deadline', 'Priority','Workload'])
 		self.TaskNum = 0
 		self.tableWidget.setContextMenuPolicy(Qt.CustomContextMenu)
 		self.tableWidget.customContextMenuRequested.connect(self.TaskTable_Menu)
 		self.tableWidget.setRowCount(0)
-		self.tableWidget.setColumnCount(4)
-		self.tableWidget.setHorizontalHeaderLabels(['√', 'Task', 'Deadline', 'Priority'])
+		self.tableWidget.setColumnCount(5)
+		self.tableWidget.setHorizontalHeaderLabels(['√', 'Task', 'Deadline', 'Priority','Workload'])
 		self.tableWidget.horizontalHeader().setStyleSheet("QHeaderView::section{font:13pt \"Calibri\"}")
 
 	def sortTaskList(self):
@@ -91,7 +107,7 @@ class MainWindow(QWidget, Ui_Form):
 		self.tableWidget.setRowCount(self.TaskNum)
 
 		for row in range(self.TaskNum):
-			for column in range(4):
+			for column in range(5):
 				if column == 0:
 					checkbox = QCheckBox()
 					checkbox.setStyleSheet('QComboBox{margin:3px};')
@@ -100,6 +116,8 @@ class MainWindow(QWidget, Ui_Form):
 					self.tableWidget.setCellWidget(row, 0, checkbox)
 				elif column == 3:
 					self.tableWidget.setItem(row, column, QTableWidgetItem(PriorityDict[self.Tasklist.iloc[row][column]]))
+				elif column==4:
+					self.tableWidget.setItem(row, column, QTableWidgetItem(str(self.Tasklist.iloc[row][column])))
 				else:
 					self.tableWidget.setItem(row, column, QTableWidgetItem(self.Tasklist.iloc[row][column]))
 	def updateCheck(self):
@@ -140,17 +158,27 @@ class MainWindow(QWidget, Ui_Form):
 			self.calendarWidget.setDateTextFormat(dt, cell_format)
 		self.datelist=result[add]#更新内置日期列表
 
+	def messageDialog(self, type):
+		if type == 'invalidDate':
+			msg_box = QMessageBox(QMessageBox.Critical, 'Date input', 'The input date is not valid!')
+		msg_box.exec_()
 	def add(self,Item=None):
 		if Item==None:
-			item = {'√': False, 'Task': str(self.textEdit.toPlainText()), 'Deadline': self.comboBox_year.currentText()[2:4]+"/"+self.comboBox_month.currentText()+"/"+self.comboBox_day.currentText()+"/"+self.comboBox_hour.currentText()+"/"+self.comboBox_minute.currentText(),
-				'Priority': self.comboBox.currentIndex()}
-		else: item=Item
-		self.Tasklist = self.Tasklist.append(item, ignore_index=True)
-		self.TaskNum += 1
-		self.tableWidget.setRowCount(self.TaskNum)
-		self.sortTaskList()
-		self.UpdateTable()
-		self.highLight(item['Deadline'])
+			item = {'√': False, 'Task': str(self.textEdit.toPlainText()), 'Deadline': self.comboBox_year.currentText()[2:4]+"/"+self.comboBox_month.currentText()+"/"+self.comboBox_day.currentText()+" "+self.comboBox_hour.currentText()+":"+'00',
+				'Priority': self.comboBox.currentIndex(),'Workload':int(self.WorkLoadCombo.currentText())}
+		else:
+			item=Item
+			item['Task']=str(item['Task'])
+		dt=PyQt5.QtCore.QDate.fromString('20'+item['Deadline'].split(' ')[0],'yyyy/MM/d')
+		if dt.isValid():
+			self.Tasklist = self.Tasklist.append(item, ignore_index=True)
+			self.TaskNum += 1
+			self.tableWidget.setRowCount(self.TaskNum)
+			self.sortTaskList()
+			self.UpdateTable()
+			self.highLight(item['Deadline'])
+		else:
+			self.messageDialog('invalidDate')
 
 
 	def returnDelList(self):
@@ -184,13 +212,14 @@ class MainWindow(QWidget, Ui_Form):
 
 	def saveTaskList(self):
 		dict={'Username':str(self.Username),'Password':self.Pass,'√': False, 'Task': '', 'Deadline': '',
-					'Priority': -1}
+					'Priority': -1,'Workload':0}
 		Emptydf=pd.DataFrame([dict])
 		self.Tasklist.insert(0,'Password',self.Pass)
 		self.Tasklist.insert(0,'Username',str(self.Username))
 		df = pd.concat([self.otherStoredTasks,Emptydf,self.Tasklist])
 		#print(self.otherStoredTasks)
-		df.fillna('',inplace=True)
+		df['Task'].fillna('',inplace=True)
+		df['Workload'].fillna(2,inplace=True)
 		df.to_csv(r'data/task.csv',index=False)
 		encrypt(path,key,iv)
 	def loadTaskList(self,df):
@@ -198,7 +227,7 @@ class MainWindow(QWidget, Ui_Form):
 		for _,row in loadTasklist.iterrows():
 			#print(row.tolist())
 			item = {'√': row[2], 'Task': str(row[3]), 'Deadline': row[4],
-					'Priority': row[5]}
+					'Priority': row[5],'Workload':row[6]}
 			self.add(item)
 		#print(self.Tasklist)
 

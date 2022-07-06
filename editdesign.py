@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'edit.ui'
+# Form implementation generated from reading ui file 'editdesign.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.4
 #
@@ -9,12 +9,9 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.Qt import *
-from PyQt5.QtCore import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtGui import *
 
-class EditUi(object):
+
+class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
         Form.resize(520, 212)
@@ -41,12 +38,6 @@ class EditUi(object):
         self.Workloadcombo = QtWidgets.QComboBox(Form)
         self.Workloadcombo.setGeometry(QtCore.QRect(420, 31, 71, 41))
         self.Workloadcombo.setObjectName("Workloadcombo")
-        self.Workloadcombo.addItem("1")
-        self.Workloadcombo.addItem("2")
-        self.Workloadcombo.addItem("3")
-        self.Workloadcombo.addItem("4")
-        self.Workloadcombo.addItem("5")
-        self.Workloadcombo.addItem("6")
         self.TaskNameLabel_3 = QtWidgets.QLabel(Form)
         self.TaskNameLabel_3.setGeometry(QtCore.QRect(500, 40, 16, 21))
         self.TaskNameLabel_3.setTextFormat(QtCore.Qt.MarkdownText)
@@ -54,11 +45,6 @@ class EditUi(object):
         self.Yearcombo = QtWidgets.QComboBox(Form)
         self.Yearcombo.setGeometry(QtCore.QRect(11, 89, 101, 41))
         self.Yearcombo.setObjectName("Yearcombo")
-        self.Yearcombo.addItem("2022")
-        self.Yearcombo.addItem("2023")
-        self.Yearcombo.addItem("2024")
-        self.Yearcombo.addItem("2025")
-        self.Yearcombo.addItem("2026")
         self.Slash1 = QtWidgets.QLabel(Form)
         self.Slash1.setGeometry(QtCore.QRect(117, 100, 16, 21))
         self.Slash1.setTextFormat(QtCore.Qt.MarkdownText)
@@ -66,24 +52,9 @@ class EditUi(object):
         self.Monthcombo = QtWidgets.QComboBox(Form)
         self.Monthcombo.setGeometry(QtCore.QRect(133, 90, 61, 41))
         self.Monthcombo.setObjectName("Monthcombo")
-        self.Monthcombo.addItem("01")
-        self.Monthcombo.addItem("02")
-        self.Monthcombo.addItem("03")
-        self.Monthcombo.addItem("04")
-        self.Monthcombo.addItem("05")
-        self.Monthcombo.addItem("06")
-        self.Monthcombo.addItem("07")
-        self.Monthcombo.addItem("08")
-        self.Monthcombo.addItem("09")
-        self.Monthcombo.addItem("10")
-        self.Monthcombo.addItem("11")
-        self.Monthcombo.addItem("12")
-
         self.Daycombo = QtWidgets.QComboBox(Form)
         self.Daycombo.setGeometry(QtCore.QRect(218, 90, 61, 41))
         self.Daycombo.setObjectName("Daycombo")
-        for i in range(1, 32):
-            self.Daycombo.addItem(str(i).zfill(2))
         self.Slash2 = QtWidgets.QLabel(Form)
         self.Slash2.setGeometry(QtCore.QRect(202, 101, 20, 21))
         self.Slash2.setTextFormat(QtCore.Qt.MarkdownText)
@@ -91,8 +62,6 @@ class EditUi(object):
         self.Hourcombo = QtWidgets.QComboBox(Form)
         self.Hourcombo.setGeometry(QtCore.QRect(326, 90, 61, 41))
         self.Hourcombo.setObjectName("Hourcombo")
-        for i in range(0, 24):
-            self.Hourcombo.addItem(str(i).zfill(2))
         self.TimeLabel = QtWidgets.QLabel(Form)
         self.TimeLabel.setGeometry(QtCore.QRect(283, 100, 41, 21))
         self.TimeLabel.setTextFormat(QtCore.Qt.MarkdownText)
@@ -112,17 +81,10 @@ class EditUi(object):
         self.Pricombo.setItemText(1, _translate("Form", "Avg"))
         self.Pricombo.setItemText(2, _translate("Form", "High"))
         self.ConfirmEditButton.setText(_translate("Form", "Confirm"))
-        self.TaskNameLabel.setText(_translate("Form",
-                                              "<html><head/><body><p><span style=\" font-size:12pt;\">Task Name</span></p></body></html>"))
-        self.WorkloadLabel.setText(_translate("Form",
-                                              "<html><head/><body><p><span style=\" font-size:12pt;\">Work Load</span></p></body></html>"))
-        self.TaskNameLabel_3.setText(
-            _translate("Form", "<html><head/><body><p><span style=\" font-size:12pt;\">h</span></p></body></html>"))
-        self.Slash1.setText(
-            _translate("Form", "<html><head/><body><p><span style=\" font-size:14pt;\">/</span></p></body></html>"))
-        self.Slash2.setText(
-            _translate("Form", "<html><head/><body><p><span style=\" font-size:14pt;\">/</span></p></body></html>"))
-        self.TimeLabel.setText(
-            _translate("Form", "<html><head/><body><p><span style=\" font-size:14pt;\">Time</span></p></body></html>"))
-        self.MinuLabel.setText(
-            _translate("Form", "<html><head/><body><p><span style=\" font-size:14pt;\">:00</span></p></body></html>"))
+        self.TaskNameLabel.setText(_translate("Form", "<html><head/><body><p><span style=\" font-size:12pt;\">Task Name</span></p></body></html>"))
+        self.WorkloadLabel.setText(_translate("Form", "<html><head/><body><p><span style=\" font-size:12pt;\">Work Load</span></p></body></html>"))
+        self.TaskNameLabel_3.setText(_translate("Form", "<html><head/><body><p><span style=\" font-size:12pt;\">h</span></p></body></html>"))
+        self.Slash1.setText(_translate("Form", "<html><head/><body><p><span style=\" font-size:14pt;\">/</span></p></body></html>"))
+        self.Slash2.setText(_translate("Form", "<html><head/><body><p><span style=\" font-size:14pt;\">/</span></p></body></html>"))
+        self.TimeLabel.setText(_translate("Form", "<html><head/><body><p><span style=\" font-size:14pt;\">Time</span></p></body></html>"))
+        self.MinuLabel.setText(_translate("Form", "<html><head/><body><p><span style=\" font-size:14pt;\">:00</span></p></body></html>"))

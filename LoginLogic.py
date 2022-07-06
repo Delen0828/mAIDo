@@ -58,21 +58,27 @@ class LoginWindowLogic(QWidget, Login_Ui_Form):
         #print(loadTasklist)
         loadTasklist.drop(loadTasklist.index[0],inplace=True)
         if len(loadTasklist)>0:
-            loadTasklist['Task']=loadTasklist['Task'].astype(np.str)
             loadTasklist['√']=loadTasklist['√'].astype('bool')
-            loadTasklist['Priority']=loadTasklist['Priority'].astype(np.int)
+            loadTasklist['Priority']=loadTasklist['Priority'].astype('int')
+            loadTasklist['Workload'] = loadTasklist['Workload'].astype('int')
             self.Mainwindow.loadTaskList(loadTasklist)
         self.Mainwindow.otherStoredTasks=otherTasks.copy()
         self.Mainwindow.Username=username
         self.Mainwindow.Pass=passWord
     def login(self):
-        #os.rename(path,pathtxt)
+        if not os.path.exists(r'data/task.csv'):
+            df = pd.DataFrame(columns=['Username','Password','√', 'Task', 'Deadline', 'Priority', 'Workload'])
+            df.to_csv(r'data/task.csv', index=False)
+            encrypt(path,key,iv)
         decrypt(path,key,iv)
-        #os.rename(pathtxt,path)
         username=str(self.UserNameTextEdit.toPlainText())
         plainPass=str(self.passWordTextEdit.toPlainText())
+        if os.path.getsize(r'data/task.csv')<=2 :
+            df = pd.DataFrame(columns=['Username','Password','√', 'Task', 'Deadline', 'Priority', 'Workload'])
+            df.to_csv(r'data/task.csv', index=False)
         loadTasklist = pd.read_csv(r'data/task.csv')
-        loadTasklist.fillna('',inplace=True)
+        loadTasklist['Task'].fillna('/t',inplace=True)
+        loadTasklist['Workload'].fillna(2, inplace=True)
         userlist=loadTasklist['Username'].astype('str').tolist()
         shal1 = hashlib.sha1()
         data = plainPass
@@ -96,7 +102,7 @@ class LoginWindowLogic(QWidget, Login_Ui_Form):
             if plainPass=='':
                 self.messageDialog('EmptyPass')
             else:
-                newItem={'Username':str(username),'Password':str(shalPass),'√':False,'Task':'','Deadline':'','Priority':-1}
+                newItem={'Username':str(username),'Password':str(shalPass),'√':False,'Task':' ','Deadline':' ','Priority':-1,'Workload':0}
                 loadTasklist=loadTasklist.append(newItem,ignore_index=True)
                 loadTasklist.to_csv(r'data/task.csv', index=False)
                 self.messageDialog('reg')

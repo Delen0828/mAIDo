@@ -19,10 +19,10 @@ from schedule import *
 #=============================================  css_content  ==========================================
 addstyle='''
 QPushButton {
-    text-transform: none;
+	text-transform: none;
 }
 QHeaderView::section {
-    text-transform: none;
+	text-transform: none;
 }
 '''
 #=============================================  css_content  ==========================================
@@ -120,6 +120,7 @@ class MainWindow(QWidget, Ui_Form):
 					self.tableWidget.setItem(row, column, QTableWidgetItem(str(self.Tasklist.iloc[row][column])))
 				else:
 					self.tableWidget.setItem(row, column, QTableWidgetItem(self.Tasklist.iloc[row][column]))
+
 	def updateCheck(self):
 		#print('a')
 		tempdatelist=[]
@@ -232,13 +233,27 @@ class MainWindow(QWidget, Ui_Form):
 		#print(self.Tasklist)
 	def generateSchedule(self):
 		# print(self.Tasklist)
+		self.maxWorkLoad=10
 		tempTaskList=self.Tasklist.copy()
 		getScore(tempTaskList)
-		print(tempTaskList)
-		self.schedule=schedule(filterTask(tempTaskList,maxWorkLoad=8))
-		print(tempTaskList,self.schedule)
+		# print(tempTaskList)
+		self.schedule=schedule(filterTask(tempTaskList,self.maxWorkLoad))
+		# print(tempTaskList,self.schedule)
+		self.hours=range(8,8+self.maxWorkLoad)
+		self.schedule=self.schedule+[' ']*(self.maxWorkLoad-len(self.schedule))
+		self.scheduleTable=pd.DataFrame(index=self.hours,data=self.schedule,columns=['Task'])
+		self.scheduleTable=pd.DataFrame(self.scheduleTable.values.T,index=['Task'],columns=self.hours)
+		self.UpdateSchedule()
+		# print(self.scheduleTable)
 
-
+	def UpdateSchedule(self):
+		self.model = QStandardItemModel(1, len(self.hours))
+		self.model.setHorizontalHeaderLabels([str(i) for i in self.hours])
+		# self.scheduleTableView.horizontalHeader().setStyleSheet("QHeaderView::section{font:13pt \"Calibri\"}"
+		# print('test',self.scheduleTable[8])
+		for num in range(len(self.hours)):
+			self.model.setItem(0, num, QStandardItem(str(self.scheduleTable[num+8]['Task'])))
+		self.scheduleTableView.setModel(self.model)
 #==================================================================================================
 #edit 窗口
 class EditLogic(QWidget,EditUi):

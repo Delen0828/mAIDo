@@ -73,7 +73,7 @@ class LoginWindowLogic(QWidget, Login_Ui_Form):
         decrypt(path,key,iv)
         username=str(self.UserNameTextEdit.toPlainText())
         plainPass=str(self.passWordTextEdit.toPlainText())
-        if os.path.getsize(r'data/task.csv')==0 :
+        if os.path.getsize(r'data/task.csv')<=2 :
             df = pd.DataFrame(columns=['Username','Password','√', 'Task', 'Deadline', 'Priority', 'Workload'])
             df.to_csv(r'data/task.csv', index=False)
         loadTasklist = pd.read_csv(r'data/task.csv')
@@ -102,7 +102,7 @@ class LoginWindowLogic(QWidget, Login_Ui_Form):
             if plainPass=='':
                 self.messageDialog('EmptyPass')
             else:
-                newItem={'Username':str(username),'Password':str(shalPass),'√':False,'Task':'/t','Deadline':'/t','Priority':-1,'Workload':0}
+                newItem={'Username':str(username),'Password':str(shalPass),'√':False,'Task':' ','Deadline':' ','Priority':-1,'Workload':0}
                 loadTasklist=loadTasklist.append(newItem,ignore_index=True)
                 loadTasklist.to_csv(r'data/task.csv', index=False)
                 self.messageDialog('reg')

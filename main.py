@@ -52,9 +52,7 @@ class MainWindow(QWidget, Ui_Form):
 
 
 	def test(self):
-		dt = PyQt5.QtCore.QDate.fromString('2022/06/30','yyyy/MM/d')
-		print(dt.isValid())
-		print (dt)
+		pass
 	def Comboini(self):
 		date=QDate.currentDate()
 		time=QTime.currentTime()
@@ -164,7 +162,7 @@ class MainWindow(QWidget, Ui_Form):
 		msg_box.exec_()
 	def add(self,Item=None):
 		if Item==None:
-			item = {'√': False, 'Task': str(self.textEdit.toPlainText()), 'Deadline': self.comboBox_year.currentText()[2:4]+"/"+self.comboBox_month.currentText()+"/"+self.comboBox_day.currentText()+" "+self.comboBox_hour.currentText()+":"+'00',
+			item = {'√': False, 'Task': str(self.textEdit.toPlainText())+'\t', 'Deadline': self.comboBox_year.currentText()[2:4]+"/"+self.comboBox_month.currentText()+"/"+self.comboBox_day.currentText()+" "+self.comboBox_hour.currentText()+":"+'00',
 				'Priority': self.comboBox.currentIndex(),'Workload':int(self.WorkLoadCombo.currentText())}
 		else:
 			item=Item
@@ -211,7 +209,7 @@ class MainWindow(QWidget, Ui_Form):
 		self.saveTaskList()
 
 	def saveTaskList(self):
-		dict={'Username':str(self.Username),'Password':self.Pass,'√': False, 'Task': '', 'Deadline': '',
+		dict={'Username':str(self.Username),'Password':self.Pass,'√': False, 'Task': ' ', 'Deadline': ' ',
 					'Priority': -1,'Workload':0}
 		Emptydf=pd.DataFrame([dict])
 		self.Tasklist.insert(0,'Password',self.Pass)
@@ -243,12 +241,26 @@ class EditLogic(QWidget,EditUi):
 		self.parentWidget=parent
 		self.setWindowFlags(Qt.WindowStaysOnTopHint)
 		self.ConfirmEditButton.clicked.connect(self.edit)
+		date = QDate.currentDate()
+		time = QTime.currentTime()
+		self.Yearcombo.setCurrentText(str(date.year()))
+		self.Monthcombo.setCurrentText(str(date.month()).zfill(2))
+		self.Daycombo.setCurrentText(str(date.day()).zfill(2))
+		self.Hourcombo.setCurrentText(str(time.hour()).zfill(2))
+	def messageDialog(self, type):
+		if type == 'invalidDate':
+			msg_box = QMessageBox(QMessageBox.Critical, 'Date input', 'The input date is not valid!')
+			msg_box.setWindowFlags(Qt.WindowStaysOnTopHint)
+		msg_box.exec_()
 	def edit(self):
-		item = {'√': False, 'Task': str(self.textEdit.toPlainText()), 'Deadline': self.dateTimeEdit.text(),
-				'Priority': self.comboBox.currentIndex()}
-		self.parentWidget.Delete()
-		self.parentWidget.add(item)
-		self.close()
+		item = {'√': False, 'Task': str(self.textEdit.toPlainText()), 'Deadline': self.Yearcombo.currentText()[2:4]+"/"+self.Monthcombo.currentText()+"/"+self.Daycombo.currentText()+" "+self.Hourcombo.currentText()+":"+'00',
+				'Priority': self.Pricombo.currentIndex(),'Workload':int(self.Workloadcombo.currentText())}
+		dt = PyQt5.QtCore.QDate.fromString('20' + item['Deadline'].split(' ')[0], 'yyyy/MM/d')
+		if dt.isValid():
+			self.parentWidget.Delete()
+			self.parentWidget.add(item)
+			self.close()
+		else: self.messageDialog('invalidDate')
 		#print(self.parentWidget.Tasklist)
 		#print(self.parentWidget.datelist)
 	def closeEvent(self,event):

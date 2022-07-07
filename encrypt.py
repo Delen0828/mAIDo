@@ -27,4 +27,4 @@ def decrypt(filepath,key,iv):
     out_file.write(pt)
 
 if __name__ == '__main__':
-    encrypt(os.path.join(os.getcwd(),'data','task.csv'),key,iv)
+    decrypt(os.path.join(os.getcwd(),'data','task.csv'),key,iv)

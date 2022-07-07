@@ -29,7 +29,7 @@ class Ui_Form(object):
 		# self.loadButton.setStyleSheet("font: 12pt \"Calibri\";")
 		# self.loadButton.setObjectName("loadButton")
 		self.generateButton = QtWidgets.QPushButton(Form)
-		self.generateButton.setGeometry(QtCore.QRect(14, 50, 100, 41))
+		self.generateButton.setGeometry(QtCore.QRect(310, 216, 100, 41))
 		self.generateButton.setStyleSheet("font: 12pt \"Calibri\";")
 		self.generateButton.setObjectName("generateButton")
 		self.saveButton = QtWidgets.QPushButton(Form)

@@ -233,17 +233,18 @@ class MainWindow(QWidget, Ui_Form):
 		#print(self.Tasklist)
 	def generateSchedule(self):
 		# print(self.Tasklist)
-		self.maxWorkLoad=10
-		tempTaskList=self.Tasklist.copy()
-		getScore(tempTaskList)
-		# print(tempTaskList)
-		self.schedule=schedule(filterTask(tempTaskList,self.maxWorkLoad))
-		# print(tempTaskList,self.schedule)
-		self.hours=range(8,8+self.maxWorkLoad)
-		self.schedule=self.schedule+[' ']*(self.maxWorkLoad-len(self.schedule))
-		self.scheduleTable=pd.DataFrame(index=self.hours,data=self.schedule,columns=['Task'])
-		self.scheduleTable=pd.DataFrame(self.scheduleTable.values.T,index=['Task'],columns=self.hours)
-		self.UpdateSchedule()
+		if not self.Tasklist.empty:
+			self.maxWorkLoad=10
+			tempTaskList=self.Tasklist.copy()
+			getScore(tempTaskList)
+			# print(tempTaskList)
+			self.schedule=schedule(filterTask(tempTaskList,self.maxWorkLoad))
+			# print(tempTaskList,self.schedule)
+			self.hours=range(8,8+self.maxWorkLoad)
+			self.schedule=self.schedule+[' ']*(self.maxWorkLoad-len(self.schedule))
+			self.scheduleTable=pd.DataFrame(index=self.hours,data=self.schedule,columns=['Task'])
+			self.scheduleTable=pd.DataFrame(self.scheduleTable.values.T,index=['Task'],columns=self.hours)
+			self.UpdateSchedule()
 		# print(self.scheduleTable)
 
 	def UpdateSchedule(self):

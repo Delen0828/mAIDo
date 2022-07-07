@@ -39,7 +39,8 @@ def filterTask(Tasklist, maxWorkLoad):
 		today=time.strftime('%y/%m/%d',time.localtime())
 		datelist=np.array(Tasklist['Deadline'].str.split(' ').to_list())[:,0]
 		notTodayList=pd.Series(list(datelist!=[today]*len(datelist)))
-		temp=Tasklist[Tasklist['Workload'].reset_index(drop=True)<=timediff * notTodayList.reset_index(drop=True)].reset_index(drop=True)
+		Tasklist=Tasklist.reset_index(drop=True)
+		temp=Tasklist[Tasklist['Workload']<=timediff * notTodayList]
 		otherWork=temp.sort_values('Score',ascending=False)
 		while timediff>0 and len(otherWork)>0:
 			# print(otherWork)

@@ -192,6 +192,8 @@ class Ui_Form(object):
 		self.generateButton.clicked.connect(lambda: Form.generateSchedule())
 		#self.loadButton.clicked.connect(lambda: Form.loadTaskList())
 		self.tableWidget.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+		self.scheduleTableView.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+		self.scheduleTableView.setSelectionMode(0)
 		self.retranslateUi(Form)
 		QtCore.QMetaObject.connectSlotsByName(Form)
 

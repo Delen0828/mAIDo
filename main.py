@@ -247,9 +247,10 @@ class MainWindow(QWidget, Ui_Form):
 			self.UpdateSchedule()
 		# print(self.scheduleTable)
 
+
 	def UpdateSchedule(self):
 		self.model = QStandardItemModel(1, len(self.hours))
-		self.model.setHorizontalHeaderLabels([str(i) for i in self.hours])
+		self.model.setHorizontalHeaderLabels([str(i)+':00' for i in self.hours])
 		# self.scheduleTableView.horizontalHeader().setStyleSheet("QHeaderView::section{font:13pt \"Calibri\"}"
 		# print('test',self.scheduleTable[8])
 		for num in range(len(self.hours)):

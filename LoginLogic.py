@@ -35,6 +35,8 @@ class LoginWindowLogic(QWidget, Login_Ui_Form):
         self.setupUi(self)
         self.LoginButton.clicked.connect(self.login)
         self.Mainwindow = MainWindow()
+        if not os.path.exists(os.path.join(os.getcwd(),'data')):
+            os.makedirs(os.path.join(os.getcwd(),'data'))
 
     def messageDialog(self,type):
         if type=='inform':

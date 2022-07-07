@@ -31,7 +31,7 @@ class EditUi(object):
         self.ConfirmEditButton.setGeometry(QtCore.QRect(190, 150, 131, 51))
         self.ConfirmEditButton.setObjectName("ConfirmEditButton")
         self.TaskNameLabel = QtWidgets.QLabel(Form)
-        self.TaskNameLabel.setGeometry(QtCore.QRect(10, 40, 111, 21))
+        self.TaskNameLabel.setGeometry(QtCore.QRect(5, 40, 111, 21))
         self.TaskNameLabel.setTextFormat(QtCore.Qt.MarkdownText)
         self.TaskNameLabel.setObjectName("TaskNameLabel")
         self.WorkloadLabel = QtWidgets.QLabel(Form)
@@ -98,7 +98,7 @@ class EditUi(object):
         self.TimeLabel.setTextFormat(QtCore.Qt.MarkdownText)
         self.TimeLabel.setObjectName("TimeLabel")
         self.MinuLabel = QtWidgets.QLabel(Form)
-        self.MinuLabel.setGeometry(QtCore.QRect(387, 101, 41, 21))
+        self.MinuLabel.setGeometry(QtCore.QRect(391, 101, 41, 21))
         self.MinuLabel.setTextFormat(QtCore.Qt.MarkdownText)
         self.MinuLabel.setObjectName("MinuLabel")
 
@@ -119,10 +119,10 @@ class EditUi(object):
         self.TaskNameLabel_3.setText(
             _translate("Form", "<html><head/><body><p><span style=\" font-size:12pt;\">h</span></p></body></html>"))
         self.Slash1.setText(
-            _translate("Form", "<html><head/><body><p><span style=\" font-size:14pt;\">/</span></p></body></html>"))
+            _translate("Form", "<html><head/><body><p><span style=\" font-size:12pt;\">/</span></p></body></html>"))
         self.Slash2.setText(
-            _translate("Form", "<html><head/><body><p><span style=\" font-size:14pt;\">/</span></p></body></html>"))
+            _translate("Form", "<html><head/><body><p><span style=\" font-size:12pt;\">/</span></p></body></html>"))
         self.TimeLabel.setText(
-            _translate("Form", "<html><head/><body><p><span style=\" font-size:14pt;\">Time</span></p></body></html>"))
+            _translate("Form", "<html><head/><body><p><span style=\" font-size:12pt;\">Time</span></p></body></html>"))
         self.MinuLabel.setText(
-            _translate("Form", "<html><head/><body><p><span style=\" font-size:14pt;\">:00</span></p></body></html>"))
+            _translate("Form", "<html><head/><body><p><span style=\" font-size:12pt;\">:00</span></p></body></html>"))

@@ -75,10 +75,11 @@ class Ui_Form(object):
 			self.comboBox_day.addItem(str(i).zfill(2))
 
 		self.comboBox_hour=QtWidgets.QComboBox(Form)
-		self.comboBox_hour.setGeometry(QtCore.QRect(1030, 80, 51, 41))
+		self.comboBox_hour.setGeometry(QtCore.QRect(1020, 80, 80, 41))
 		self.comboBox_hour.setObjectName("Hour")
 		for i in range(0,24):
-			self.comboBox_hour.addItem(str(i).zfill(2))
+			self.comboBox_hour.addItem(str(i).zfill(2)+":00")
+			self.comboBox_hour.addItem(str(i).zfill(2)+":30")
 		self.comboBox = QtWidgets.QComboBox(Form)
 		self.comboBox.setGeometry(QtCore.QRect(804, 130, 81, 41))
 		self.comboBox.setStyleSheet("font: 13pt \"Calibri\";")

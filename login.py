@@ -9,6 +9,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtCore import *
 
 
 class Login_Ui_Form(object):
@@ -42,13 +43,13 @@ class Login_Ui_Form(object):
         self.LoginButton = QtWidgets.QPushButton(Form)
         self.LoginButton.setGeometry(QtCore.QRect(110, 230, 111, 41))
         self.LoginButton.setObjectName("LoginButton")
-
+        self.LoginButton.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
         ##
-
-        Form.setTabOrder(self.UserNameTextEdit, self.passWordTextEdit)
-        Form.setTabOrder(self.passWordTextEdit, self.UserNameTextEdit)
+        self.passWordTextEdit.setEchoMode(QtWidgets.QLineEdit.Password)
+        #Form.setTabOrder(self.UserNameTextEdit.focusProxy(), self.passWordTextEdit.focusProxy())
+        #Form.setTabOrder(self.passWordTextEdit.focusProxy() ,self.UserNameTextEdit.focusProxy())
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate

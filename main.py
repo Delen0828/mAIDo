@@ -165,7 +165,7 @@ class MainWindow(QWidget, Ui_Form):
 		msg_box.exec_()
 	def add(self,Item=None):
 		if Item==None:
-			item = {'√': False, 'Task': str(self.textEdit.toPlainText())+'\t', 'Deadline': self.comboBox_year.currentText()[2:4]+"/"+self.comboBox_month.currentText()+"/"+self.comboBox_day.currentText()+" "+self.comboBox_hour.currentText()+":"+'00',
+			item = {'√': False, 'Task': str(self.textEdit.toPlainText())+'\t', 'Deadline': self.comboBox_year.currentText()[2:4]+"/"+self.comboBox_month.currentText()+"/"+self.comboBox_day.currentText()+" "+self.comboBox_hour.currentText(),
 				'Priority': self.comboBox.currentIndex(),'Workload':int(self.WorkLoadCombo.currentText())}
 		else:
 			item=Item
@@ -203,7 +203,11 @@ class MainWindow(QWidget, Ui_Form):
 	def Edit(self):
 		self.setEnabled(False)
 		self.setFocusPolicy(Qt.NoFocus)
-		self.child = EditLogic(self)
+		ind=self.returnDelList()
+		#print(ind)
+		record=self.Tasklist[:ind[0]+1]
+		#print(record)
+		self.child = EditLogic(self,record)
 		self.child.show()
 	
 	def closeEvent(self,event):
@@ -259,8 +263,12 @@ class MainWindow(QWidget, Ui_Form):
 #==================================================================================================
 #edit 窗口
 class EditLogic(QWidget,EditUi):
-	def __init__(self,parent):
+	def __init__(self,parent,record):
 		super().__init__()
+		name=record['Task'][0]
+		dtime=str(record['Deadline'][0])
+		workload=str(record['Workload'][0])
+		pri=PriorityDict[record['Priority'][0]]
 		self.setWindowTitle("Edit a task")
 		self.setWindowIcon(QIcon('icon.ico'))
 		self.setupUi(self)
@@ -268,11 +276,17 @@ class EditLogic(QWidget,EditUi):
 		self.parentWidget=parent
 		self.setWindowFlags(Qt.WindowStaysOnTopHint)
 		self.ConfirmEditButton.clicked.connect(self.edit)
-		date = QDate.currentDate()
-		time = QTime.currentTime()
-		self.Yearcombo.setCurrentText(str(date.year()))
-		self.Monthcombo.setCurrentText(str(date.month()).zfill(2))
-		self.Daycombo.setCurrentText(str(date.day()).zfill(2))
+		self.Pricombo.setCurrentText(str(pri))
+		self.Workloadcombo.setCurrentText(str(workload))
+		self.textEdit.setText(name)
+		self.textEdit.setTabChangesFocus(True)
+		dt=dtime.split(' ')[0]
+		time=PyQt5.QtCore.QTime.fromString(dtime.split(' ')[1],'hh:mm')
+		print(dtime)
+		print(dt)
+		self.Yearcombo.setCurrentText('20'+dt.split('/')[0])
+		self.Monthcombo.setCurrentText(dt.split('/')[1])
+		self.Daycombo.setCurrentText(dt.split('/')[2])
 		self.Hourcombo.setCurrentText(str(time.hour()).zfill(2))
 	def messageDialog(self, type):
 		if type == 'invalidDate':
@@ -280,7 +294,7 @@ class EditLogic(QWidget,EditUi):
 			msg_box.setWindowFlags(Qt.WindowStaysOnTopHint)
 		msg_box.exec_()
 	def edit(self):
-		item = {'√': False, 'Task': str(self.textEdit.toPlainText()), 'Deadline': self.Yearcombo.currentText()[2:4]+"/"+self.Monthcombo.currentText()+"/"+self.Daycombo.currentText()+" "+self.Hourcombo.currentText()+":"+'00',
+		item = {'√': False, 'Task': str(self.textEdit.toPlainText()), 'Deadline': self.Yearcombo.currentText()[2:4]+"/"+self.Monthcombo.currentText()+"/"+self.Daycombo.currentText()+" "+self.Hourcombo.currentText(),
 				'Priority': self.Pricombo.currentIndex(),'Workload':int(self.Workloadcombo.currentText())}
 		dt = PyQt5.QtCore.QDate.fromString('20' + item['Deadline'].split(' ')[0], 'yyyy/MM/d')
 		if dt.isValid():

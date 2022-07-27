@@ -311,11 +311,11 @@ class EditLogic(QWidget,EditUi):
 
 if __name__ == '__main__':
 	QCoreApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
+	QCoreApplication.setAttribute(Qt.AA_UseHighDpiPixmaps)
 	app = QApplication(sys.argv)
 	apply_stylesheet(app, theme='dark_teal.xml')
 	stylesheet = app.styleSheet()
 	#print(stylesheet)
-
 	app.setStyleSheet(stylesheet + addstyle)
 
 	window = MainWindow()

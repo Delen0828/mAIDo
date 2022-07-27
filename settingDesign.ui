@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>488</width>
-    <height>271</height>
+    <height>290</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,7 +16,7 @@
   <widget class="QLabel" name="ScheduleLabel">
    <property name="geometry">
     <rect>
-     <x>10</x>
+     <x>14</x>
      <y>20</y>
      <width>181</width>
      <height>61</height>
@@ -200,7 +200,7 @@
   <widget class="QLabel" name="WeekDayLabel">
    <property name="geometry">
     <rect>
-     <x>10</x>
+     <x>9</x>
      <y>100</y>
      <width>181</width>
      <height>61</height>
@@ -262,7 +262,7 @@
   <widget class="QLabel" name="RankLabel">
    <property name="geometry">
     <rect>
-     <x>10</x>
+     <x>46</x>
      <y>170</y>
      <width>181</width>
      <height>61</height>
@@ -283,6 +283,57 @@
     <enum>Qt::PlainText</enum>
    </property>
   </widget>
+  <widget class="QRadioButton" name="Rank1">
+   <property name="geometry">
+    <rect>
+     <x>181</x>
+     <y>180</y>
+     <width>131</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial</family>
+     <pointsize>14</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>Priority First</string>
+   </property>
+  </widget>
+  <widget class="QRadioButton" name="Rank1_2">
+   <property name="geometry">
+    <rect>
+     <x>319</x>
+     <y>180</y>
+     <width>151</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial</family>
+     <pointsize>14</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>Workload First</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="SaveSettingButton">
+   <property name="geometry">
+    <rect>
+     <x>185</x>
+     <y>230</y>
+     <width>130</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Save Setting</string>
+   </property>
+  </widget>
   <zorder>SchedulePeriod_1</zorder>
   <zorder>ScheduleLabel</zorder>
   <zorder>schedule1</zorder>
@@ -292,6 +343,9 @@
   <zorder>mondayfirst</zorder>
   <zorder>sundayfirst</zorder>
   <zorder>RankLabel</zorder>
+  <zorder>Rank1</zorder>
+  <zorder>Rank1_2</zorder>
+  <zorder>SaveSettingButton</zorder>
  </widget>
  <resources/>
  <connections/>

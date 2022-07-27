@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from layout import Ui_Form
 from edit import EditUi
+from Setting import SettingUi
 import sys
 # import functools
 import numpy as np
@@ -36,6 +37,12 @@ PriorityDict = {0: 'Low', 1: 'Avg', 2: 'High'}
 class MainWindow(QWidget, Ui_Form):
 	def __init__(self):
 		super().__init__()
+		##setting
+		self.weekDayformat = 0
+		self.rankPri = 0
+		self.scheduleTimeBegin = None
+		self.scheduleTimeEnd = None
+		##
 		self.setWindowTitle("mAIDo-Demo")
 		self.setWindowIcon(QIcon('icon.ico'))
 		self.setupUi(self)
@@ -49,6 +56,7 @@ class MainWindow(QWidget, Ui_Form):
 		self.Username=None
 		self.Pass=None
 		self.otherStoredTasks=None
+
 
 
 
@@ -260,6 +268,12 @@ class MainWindow(QWidget, Ui_Form):
 		for num in range(len(self.hours)):
 			self.model.setItem(0, num, QStandardItem(str(self.scheduleTable[num+8]['Task'])))
 		self.scheduleTableView.setModel(self.model)
+
+	def setting(self):
+		self.setEnabled(False)
+		self.setFocusPolicy(Qt.NoFocus)
+		self.child = SettingLogic(self)
+		self.child.show()
 #==================================================================================================
 #edit 窗口
 class EditLogic(QWidget,EditUi):
@@ -307,7 +321,20 @@ class EditLogic(QWidget,EditUi):
 	def closeEvent(self,event):
 		self.parentWidget.setFocusPolicy(Qt.StrongFocus)
 		self.parentWidget.setEnabled(True)
-
+#==================================================================================================
+#setting 窗口
+class SettingLogic(QWidget,SettingUi):
+	def __init__(self,parent):
+		super().__init__()
+		self.setWindowTitle("Setting")
+		self.setWindowIcon(QIcon('icon.ico'))
+		self.setupUi(self)
+		self.setFixedSize(self.width(), self.height())
+		self.parentWidget = parent
+		self.setWindowFlags(Qt.WindowStaysOnTopHint)
+	def closeEvent(self,event):
+		self.parentWidget.setFocusPolicy(Qt.StrongFocus)
+		self.parentWidget.setEnabled(True)
 
 if __name__ == '__main__':
 	QCoreApplication.setAttribute(Qt.AA_EnableHighDpiScaling)

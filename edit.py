@@ -89,18 +89,15 @@ class EditUi(object):
         self.Slash2.setTextFormat(QtCore.Qt.MarkdownText)
         self.Slash2.setObjectName("Slash2")
         self.Hourcombo = QtWidgets.QComboBox(Form)
-        self.Hourcombo.setGeometry(QtCore.QRect(326, 90, 61, 41))
+        self.Hourcombo.setGeometry(QtCore.QRect(326, 90, 101, 41))
         self.Hourcombo.setObjectName("Hourcombo")
         for i in range(0, 24):
-            self.Hourcombo.addItem(str(i).zfill(2))
+            self.Hourcombo.addItem(str(i).zfill(2)+':00')
+            self.Hourcombo.addItem(str(i).zfill(2) + ':30')
         self.TimeLabel = QtWidgets.QLabel(Form)
         self.TimeLabel.setGeometry(QtCore.QRect(283, 100, 41, 21))
         self.TimeLabel.setTextFormat(QtCore.Qt.MarkdownText)
         self.TimeLabel.setObjectName("TimeLabel")
-        self.MinuLabel = QtWidgets.QLabel(Form)
-        self.MinuLabel.setGeometry(QtCore.QRect(391, 101, 41, 21))
-        self.MinuLabel.setTextFormat(QtCore.Qt.MarkdownText)
-        self.MinuLabel.setObjectName("MinuLabel")
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
@@ -124,5 +121,3 @@ class EditUi(object):
             _translate("Form", "<html><head/><body><p><span style=\" font-size:12pt;\">/</span></p></body></html>"))
         self.TimeLabel.setText(
             _translate("Form", "<html><head/><body><p><span style=\" font-size:12pt;\">Time</span></p></body></html>"))
-        self.MinuLabel.setText(
-            _translate("Form", "<html><head/><body><p><span style=\" font-size:12pt;\">:00</span></p></body></html>"))

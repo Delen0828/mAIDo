@@ -231,17 +231,17 @@ class MainWindow(QWidget, Ui_Form):
 					'Priority': row[5],'Workload':row[6]}
 			self.add(item)
 		#print(self.Tasklist)
-	def generateSchedule(self):
-		# print(self.Tasklist)
+	def generateSchedule(self,startTime=8,maxWorkLoad=10):
+		# startTime is the starting time of a day
+		# maxWorkLoad is what amount of time user work everyday
+		# maxWorklaod+starTime should not exceed 23
 		if not self.Tasklist.empty:
-			self.maxWorkLoad=10
+			self.maxWorkLoad=maxWorkLoad
 			tempTaskList=self.Tasklist.copy()
-			getScore(tempTaskList)
 			# print(tempTaskList)
-			self.schedule=schedule(filterTask(tempTaskList,self.maxWorkLoad))
-			# print(tempTaskList,self.schedule)
-			self.hours=range(8,8+self.maxWorkLoad)
-			self.schedule=self.schedule+[' ']*(self.maxWorkLoad-len(self.schedule))
+			self.schedule=schedule(filterTask(tempTaskList,self.maxWorkLoad),self.maxWorkLoad)
+			print(tempTaskList,self.schedule)
+			self.hours=range(startTime,startTime+self.maxWorkLoad)
 			self.scheduleTable=pd.DataFrame(index=self.hours,data=self.schedule,columns=['Task'])
 			self.scheduleTable=pd.DataFrame(self.scheduleTable.values.T,index=['Task'],columns=self.hours)
 			self.UpdateSchedule()

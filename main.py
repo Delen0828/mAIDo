@@ -40,8 +40,8 @@ class MainWindow(QWidget, Ui_Form):
 		##setting
 		self.weekDayformat = 0
 		self.rankPri = 0
-		self.scheduleTimeBegin = None
-		self.scheduleTimeEnd = None
+		self.scheduleTimeBegin = 8.0
+		self.scheduleTimeEnd = 17.0
 		##
 		self.setWindowTitle("mAIDo-Demo")
 		self.setWindowIcon(QIcon('icon.ico'))
@@ -211,9 +211,8 @@ class MainWindow(QWidget, Ui_Form):
 	def Edit(self):
 		self.setEnabled(False)
 		self.setFocusPolicy(Qt.NoFocus)
-		ind=self.returnDelList()
+		record=self.Tasklist.iloc[[self.tableWidget.selectedItems()[0].row()]]
 		#print(ind)
-		record=self.Tasklist[:ind[0]+1]
 		#print(record)
 		self.child = EditLogic(self,record)
 		self.child.show()
@@ -279,10 +278,10 @@ class MainWindow(QWidget, Ui_Form):
 class EditLogic(QWidget,EditUi):
 	def __init__(self,parent,record):
 		super().__init__()
-		name=record['Task'][0]
-		dtime=str(record['Deadline'][0])
-		workload=str(record['Workload'][0])
-		pri=PriorityDict[record['Priority'][0]]
+		name=record['Task'].tolist()[0]
+		dtime=str(record['Deadline'].tolist()[0])
+		workload=str(record['Workload'].tolist()[0])
+		pri=PriorityDict[record['Priority'].tolist()[0]]
 		self.setWindowTitle("Edit a task")
 		self.setWindowIcon(QIcon('icon.ico'))
 		self.setupUi(self)
@@ -295,13 +294,13 @@ class EditLogic(QWidget,EditUi):
 		self.textEdit.setText(name)
 		self.textEdit.setTabChangesFocus(True)
 		dt=dtime.split(' ')[0]
-		time=PyQt5.QtCore.QTime.fromString(dtime.split(' ')[1],'hh:mm')
-		print(dtime)
-		print(dt)
+		time=dtime.split(' ')[1]
+		#print(dtime)
+		#print(dt)
 		self.Yearcombo.setCurrentText('20'+dt.split('/')[0])
 		self.Monthcombo.setCurrentText(dt.split('/')[1])
 		self.Daycombo.setCurrentText(dt.split('/')[2])
-		self.Hourcombo.setCurrentText(str(time.hour()).zfill(2))
+		self.Hourcombo.setCurrentText(time)
 	def messageDialog(self, type):
 		if type == 'invalidDate':
 			msg_box = QMessageBox(QMessageBox.Critical, 'Date input', 'The input date is not valid!')
@@ -332,6 +331,33 @@ class SettingLogic(QWidget,SettingUi):
 		self.setFixedSize(self.width(), self.height())
 		self.parentWidget = parent
 		self.setWindowFlags(Qt.WindowStaysOnTopHint)
+		self.schedule1.setCurrentText('08:00')
+		self.schedule2.setCurrentText('17:00')
+	def SaveSetting(self):
+		t1=int(self.schedule1.currentText()[0:2])
+		t2 = int(self.schedule2.currentText()[0:2])
+		if self.schedule1.currentText()[3]=='0':
+			self.parentWidget.scheduleTimeBegin=t1
+		else:
+			self.parentWidget.scheduleTimeBegin = t1+0.5
+		if self.schedule2.currentText()[3] == '0':
+			self.parentWidget.scheduleTimeEnd = t2
+		else:
+			self.parentWidget.scheduleTimeEnd = t2 + 0.5
+
+		#print(self.parentWidget.scheduleTimeBegin)
+		#print(self.parentWidget.scheduleTimeEnd)
+		if self.group1.checkedButton() == self.mondayfirst:
+			self.parentWidget.calendarWidget.setFirstDayOfWeek(Qt.Monday)
+		elif self.group1.checkedButton() == self.sundayfirst:
+			self.parentWidget.calendarWidget.setFirstDayOfWeek(Qt.Sunday)
+
+		if self.group2.checkedButton() == self.Rank1:
+			self.parentWidget.rankPri=0
+		elif self.group2.checkedButton() == self.Rank1_2:
+			self.parentWidget.rankPri = 1
+
+		self.close()
 	def closeEvent(self,event):
 		self.parentWidget.setFocusPolicy(Qt.StrongFocus)
 		self.parentWidget.setEnabled(True)

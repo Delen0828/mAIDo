@@ -1,6 +1,8 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\data",
+    "\\task"
   ],
   "SelectedNode": "\\main.py",
   "PreviewInSolutionExplorer": true

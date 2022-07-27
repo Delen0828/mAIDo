@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from layout import Ui_Form
 from edit import EditUi
+from Setting import SettingUi
 import sys
 # import functools
 import numpy as np
@@ -36,6 +37,12 @@ PriorityDict = {0: 'Low', 1: 'Avg', 2: 'High'}
 class MainWindow(QWidget, Ui_Form):
 	def __init__(self):
 		super().__init__()
+		##setting
+		self.weekDayformat = 0
+		self.rankPri = 0
+		self.scheduleTimeBegin = 8.0
+		self.scheduleTimeEnd = 17.0
+		##
 		self.setWindowTitle("mAIDo-Demo")
 		self.setWindowIcon(QIcon('icon.ico'))
 		self.setupUi(self)
@@ -49,6 +56,7 @@ class MainWindow(QWidget, Ui_Form):
 		self.Username=None
 		self.Pass=None
 		self.otherStoredTasks=None
+
 
 
 
@@ -165,7 +173,7 @@ class MainWindow(QWidget, Ui_Form):
 		msg_box.exec_()
 	def add(self,Item=None):
 		if Item==None:
-			item = {'√': False, 'Task': str(self.textEdit.toPlainText())+'\t', 'Deadline': self.comboBox_year.currentText()[2:4]+"/"+self.comboBox_month.currentText()+"/"+self.comboBox_day.currentText()+" "+self.comboBox_hour.currentText()+":"+'00',
+			item = {'√': False, 'Task': str(self.textEdit.toPlainText())+'\t', 'Deadline': self.comboBox_year.currentText()[2:4]+"/"+self.comboBox_month.currentText()+"/"+self.comboBox_day.currentText()+" "+self.comboBox_hour.currentText(),
 				'Priority': self.comboBox.currentIndex(),'Workload':int(self.WorkLoadCombo.currentText())}
 		else:
 			item=Item
@@ -203,7 +211,10 @@ class MainWindow(QWidget, Ui_Form):
 	def Edit(self):
 		self.setEnabled(False)
 		self.setFocusPolicy(Qt.NoFocus)
-		self.child = EditLogic(self)
+		record=self.Tasklist.iloc[[self.tableWidget.selectedItems()[0].row()]]
+		#print(ind)
+		#print(record)
+		self.child = EditLogic(self,record)
 		self.child.show()
 	
 	def closeEvent(self,event):
@@ -247,19 +258,30 @@ class MainWindow(QWidget, Ui_Form):
 			self.UpdateSchedule()
 		# print(self.scheduleTable)
 
+
 	def UpdateSchedule(self):
 		self.model = QStandardItemModel(1, len(self.hours))
-		self.model.setHorizontalHeaderLabels([str(i) for i in self.hours])
+		self.model.setHorizontalHeaderLabels([str(i)+':00' for i in self.hours])
 		# self.scheduleTableView.horizontalHeader().setStyleSheet("QHeaderView::section{font:13pt \"Calibri\"}"
 		# print('test',self.scheduleTable[8])
 		for num in range(len(self.hours)):
 			self.model.setItem(0, num, QStandardItem(str(self.scheduleTable[num+8]['Task'])))
 		self.scheduleTableView.setModel(self.model)
+
+	def setting(self):
+		self.setEnabled(False)
+		self.setFocusPolicy(Qt.NoFocus)
+		self.child = SettingLogic(self)
+		self.child.show()
 #==================================================================================================
 #edit 窗口
 class EditLogic(QWidget,EditUi):
-	def __init__(self,parent):
+	def __init__(self,parent,record):
 		super().__init__()
+		name=record['Task'].tolist()[0]
+		dtime=str(record['Deadline'].tolist()[0])
+		workload=str(record['Workload'].tolist()[0])
+		pri=PriorityDict[record['Priority'].tolist()[0]]
 		self.setWindowTitle("Edit a task")
 		self.setWindowIcon(QIcon('icon.ico'))
 		self.setupUi(self)
@@ -267,19 +289,25 @@ class EditLogic(QWidget,EditUi):
 		self.parentWidget=parent
 		self.setWindowFlags(Qt.WindowStaysOnTopHint)
 		self.ConfirmEditButton.clicked.connect(self.edit)
-		date = QDate.currentDate()
-		time = QTime.currentTime()
-		self.Yearcombo.setCurrentText(str(date.year()))
-		self.Monthcombo.setCurrentText(str(date.month()).zfill(2))
-		self.Daycombo.setCurrentText(str(date.day()).zfill(2))
-		self.Hourcombo.setCurrentText(str(time.hour()).zfill(2))
+		self.Pricombo.setCurrentText(str(pri))
+		self.Workloadcombo.setCurrentText(str(workload))
+		self.textEdit.setText(name)
+		self.textEdit.setTabChangesFocus(True)
+		dt=dtime.split(' ')[0]
+		time=dtime.split(' ')[1]
+		#print(dtime)
+		#print(dt)
+		self.Yearcombo.setCurrentText('20'+dt.split('/')[0])
+		self.Monthcombo.setCurrentText(dt.split('/')[1])
+		self.Daycombo.setCurrentText(dt.split('/')[2])
+		self.Hourcombo.setCurrentText(time)
 	def messageDialog(self, type):
 		if type == 'invalidDate':
 			msg_box = QMessageBox(QMessageBox.Critical, 'Date input', 'The input date is not valid!')
 			msg_box.setWindowFlags(Qt.WindowStaysOnTopHint)
 		msg_box.exec_()
 	def edit(self):
-		item = {'√': False, 'Task': str(self.textEdit.toPlainText()), 'Deadline': self.Yearcombo.currentText()[2:4]+"/"+self.Monthcombo.currentText()+"/"+self.Daycombo.currentText()+" "+self.Hourcombo.currentText()+":"+'00',
+		item = {'√': False, 'Task': str(self.textEdit.toPlainText()), 'Deadline': self.Yearcombo.currentText()[2:4]+"/"+self.Monthcombo.currentText()+"/"+self.Daycombo.currentText()+" "+self.Hourcombo.currentText(),
 				'Priority': self.Pricombo.currentIndex(),'Workload':int(self.Workloadcombo.currentText())}
 		dt = PyQt5.QtCore.QDate.fromString('20' + item['Deadline'].split(' ')[0], 'yyyy/MM/d')
 		if dt.isValid():
@@ -292,15 +320,55 @@ class EditLogic(QWidget,EditUi):
 	def closeEvent(self,event):
 		self.parentWidget.setFocusPolicy(Qt.StrongFocus)
 		self.parentWidget.setEnabled(True)
+#==================================================================================================
+#setting 窗口
+class SettingLogic(QWidget,SettingUi):
+	def __init__(self,parent):
+		super().__init__()
+		self.setWindowTitle("Setting")
+		self.setWindowIcon(QIcon('icon.ico'))
+		self.setupUi(self)
+		self.setFixedSize(self.width(), self.height())
+		self.parentWidget = parent
+		self.setWindowFlags(Qt.WindowStaysOnTopHint)
+		self.schedule1.setCurrentText('08:00')
+		self.schedule2.setCurrentText('17:00')
+	def SaveSetting(self):
+		t1=int(self.schedule1.currentText()[0:2])
+		t2 = int(self.schedule2.currentText()[0:2])
+		if self.schedule1.currentText()[3]=='0':
+			self.parentWidget.scheduleTimeBegin=t1
+		else:
+			self.parentWidget.scheduleTimeBegin = t1+0.5
+		if self.schedule2.currentText()[3] == '0':
+			self.parentWidget.scheduleTimeEnd = t2
+		else:
+			self.parentWidget.scheduleTimeEnd = t2 + 0.5
 
+		#print(self.parentWidget.scheduleTimeBegin)
+		#print(self.parentWidget.scheduleTimeEnd)
+		if self.group1.checkedButton() == self.mondayfirst:
+			self.parentWidget.calendarWidget.setFirstDayOfWeek(Qt.Monday)
+		elif self.group1.checkedButton() == self.sundayfirst:
+			self.parentWidget.calendarWidget.setFirstDayOfWeek(Qt.Sunday)
+
+		if self.group2.checkedButton() == self.Rank1:
+			self.parentWidget.rankPri=0
+		elif self.group2.checkedButton() == self.Rank1_2:
+			self.parentWidget.rankPri = 1
+
+		self.close()
+	def closeEvent(self,event):
+		self.parentWidget.setFocusPolicy(Qt.StrongFocus)
+		self.parentWidget.setEnabled(True)
 
 if __name__ == '__main__':
 	QCoreApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
+	QCoreApplication.setAttribute(Qt.AA_UseHighDpiPixmaps)
 	app = QApplication(sys.argv)
 	apply_stylesheet(app, theme='dark_teal.xml')
 	stylesheet = app.styleSheet()
 	#print(stylesheet)
-
 	app.setStyleSheet(stylesheet + addstyle)
 
 	window = MainWindow()

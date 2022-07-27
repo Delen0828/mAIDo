@@ -49,7 +49,8 @@ class LoginWindowLogic(QWidget, Login_Ui_Form):
             msg_box = QMessageBox(QMessageBox.Warning, 'Register', 'The username can not be empty!')
         if type == 'EmptyPass':
             msg_box = QMessageBox(QMessageBox.Warning, 'Register', 'The password can not be empty!')
-
+        if type == 'Value Error':
+            msg_box = QMessageBox(QMessageBox.Critical, 'Error', 'The csv file is not encrypted!')
         msg_box.exec_()
 
 
@@ -68,51 +69,56 @@ class LoginWindowLogic(QWidget, Login_Ui_Form):
         self.Mainwindow.Username=username
         self.Mainwindow.Pass=passWord
     def login(self):
-        if not os.path.exists(r'data/task.csv'):
-            df = pd.DataFrame(columns=['Username','Password','√', 'Task', 'Deadline', 'Priority', 'Workload'])
-            df.to_csv(r'data/task.csv', index=False)
+        try:
+            if not os.path.exists(r'data/task.csv'):
+                df = pd.DataFrame(columns=['Username','Password','√', 'Task', 'Deadline', 'Priority', 'Workload'])
+                df.to_csv(r'data/task.csv', index=False)
+                encrypt(path,key,iv)
+            decrypt(path,key,iv)
+            username=str(self.UserNameTextEdit.text())
+            plainPass=str(self.passWordTextEdit.text())
+            if os.path.getsize(r'data/task.csv')<=2 :
+                df = pd.DataFrame(columns=['Username','Password','√', 'Task', 'Deadline', 'Priority', 'Workload'])
+                df.to_csv(r'data/task.csv', index=False)
+            loadTasklist = pd.read_csv(r'data/task.csv')
+            loadTasklist['Task'].fillna('/t',inplace=True)
+            loadTasklist['Workload'].fillna(2, inplace=True)
+            userlist=loadTasklist['Username'].astype('str').tolist()
+            shal1 = hashlib.sha1()
+            data = plainPass
+            shal1.update(data.encode('utf-8'))
+            shalPass = shal1.hexdigest()
+            if username=='':
+                self.messageDialog('EmptyUser')
+            elif username in userlist:
+                loadTasklist['Username'] = loadTasklist['Username'].astype('str')
+                loadTasklist['Password'] = loadTasklist['Password'].astype('str')
+                loadPass=loadTasklist[loadTasklist['Username']==username]['Password'].unique()
+                if shalPass==loadPass :
+                    self.messageDialog('inform')
+                    self.load(username,shalPass,loadTasklist)
+                    self.Mainwindow.show()
+                    encrypt(path,key,iv)
+                    self.close()
+                else:
+                    self.messageDialog('error')
+            else:
+                if plainPass=='':
+                    self.messageDialog('EmptyPass')
+                else:
+                    newItem={'Username':str(username),'Password':str(shalPass),'√':False,'Task':' ','Deadline':' ','Priority':-1,'Workload':0}
+                    loadTasklist=loadTasklist.append(newItem,ignore_index=True)
+                    loadTasklist.to_csv(r'data/task.csv', index=False)
+                    self.messageDialog('reg')
+                    self.load(username, shalPass,loadTasklist)
+                    self.Mainwindow.show()
+                    encrypt(path,key,iv)
+                    self.close()
+            encrypt(path, key, iv)
+        except:
+            self.messageDialog('Value Error')
             encrypt(path,key,iv)
-        decrypt(path,key,iv)
-        username=str(self.UserNameTextEdit.toPlainText())
-        plainPass=str(self.passWordTextEdit.toPlainText())
-        if os.path.getsize(r'data/task.csv')<=2 :
-            df = pd.DataFrame(columns=['Username','Password','√', 'Task', 'Deadline', 'Priority', 'Workload'])
-            df.to_csv(r'data/task.csv', index=False)
-        loadTasklist = pd.read_csv(r'data/task.csv')
-        loadTasklist['Task'].fillna('/t',inplace=True)
-        loadTasklist['Workload'].fillna(2, inplace=True)
-        userlist=loadTasklist['Username'].astype('str').tolist()
-        shal1 = hashlib.sha1()
-        data = plainPass
-        shal1.update(data.encode('utf-8'))
-        shalPass = shal1.hexdigest()
-        if username=='':
-            self.messageDialog('EmptyUser')
-        elif username in userlist:
-            loadTasklist['Username'] = loadTasklist['Username'].astype('str')
-            loadTasklist['Password'] = loadTasklist['Password'].astype('str')
-            loadPass=loadTasklist[loadTasklist['Username']==username]['Password'].unique()
-            if shalPass==loadPass :
-                self.messageDialog('inform')
-                self.load(username,shalPass,loadTasklist)
-                self.Mainwindow.show()
-                encrypt(path,key,iv)
-                self.close()
-            else:
-                self.messageDialog('error')
-        else:
-            if plainPass=='':
-                self.messageDialog('EmptyPass')
-            else:
-                newItem={'Username':str(username),'Password':str(shalPass),'√':False,'Task':' ','Deadline':' ','Priority':-1,'Workload':0}
-                loadTasklist=loadTasklist.append(newItem,ignore_index=True)
-                loadTasklist.to_csv(r'data/task.csv', index=False)
-                self.messageDialog('reg')
-                self.load(username, shalPass,loadTasklist)
-                self.Mainwindow.show()
-                encrypt(path,key,iv)
-                self.close()
-        encrypt(path, key, iv)
+            self.close()
 
 if __name__ == '__main__':
     QCoreApplication.setAttribute(Qt.AA_EnableHighDpiScaling)

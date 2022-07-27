@@ -9,12 +9,16 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtCore import *
 
 
 class Login_Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
         Form.resize(341, 297)
+        self.centralwidget = QtWidgets.QWidget(Form)
+        self.centralwidget.setObjectName("centralwidget")
+
         self.label = QtWidgets.QLabel(Form)
         self.label.setGeometry(QtCore.QRect(130, 30, 141, 51))
         font = QtGui.QFont()
@@ -30,18 +34,22 @@ class Login_Ui_Form(object):
         self.label_3 = QtWidgets.QLabel(Form)
         self.label_3.setGeometry(QtCore.QRect(30, 170, 81, 41))
         self.label_3.setObjectName("label_3")
-        self.UserNameTextEdit = QtWidgets.QTextEdit(Form)
+        self.UserNameTextEdit = QtWidgets.QLineEdit(Form)
         self.UserNameTextEdit.setGeometry(QtCore.QRect(110, 110, 201, 41))
         self.UserNameTextEdit.setObjectName("UserNameTextEdit")
-        self.passWordTextEdit = QtWidgets.QTextEdit(Form)
+        self.passWordTextEdit = QtWidgets.QLineEdit(Form)
         self.passWordTextEdit.setGeometry(QtCore.QRect(110, 170, 201, 41))
         self.passWordTextEdit.setObjectName("passWordTextEdit")
         self.LoginButton = QtWidgets.QPushButton(Form)
         self.LoginButton.setGeometry(QtCore.QRect(110, 230, 111, 41))
         self.LoginButton.setObjectName("LoginButton")
-
+        self.LoginButton.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
+        ##
+        self.passWordTextEdit.setEchoMode(QtWidgets.QLineEdit.Password)
+        #Form.setTabOrder(self.UserNameTextEdit.focusProxy(), self.passWordTextEdit.focusProxy())
+        #Form.setTabOrder(self.passWordTextEdit.focusProxy() ,self.UserNameTextEdit.focusProxy())
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate

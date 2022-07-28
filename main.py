@@ -336,8 +336,22 @@ class SettingLogic(QWidget,SettingUi):
 		self.setFixedSize(self.width(), self.height())
 		self.parentWidget = parent
 		self.setWindowFlags(Qt.WindowStaysOnTopHint)
-		self.schedule1.setCurrentText('08:00')
-		self.schedule2.setCurrentText('17:00')
+		if int(self.parentWidget.scheduleTimeBegin*2) %2==0:
+			self.schedule1.setCurrentText(str(int(self.parentWidget.scheduleTimeBegin)).zfill(2)+':00')
+		else:
+			self.schedule1.setCurrentText(str(int(self.parentWidget.scheduleTimeBegin-0.5)).zfill(2) + ':30')
+		if int(self.parentWidget.scheduleTimeEnd*2) % 2 == 0:
+			self.schedule2.setCurrentText(str(int(self.parentWidget.scheduleTimeEnd)).zfill(2) + ':00')
+		else:
+			self.schedule2.setCurrentText(str(int(self.parentWidget.scheduleTimeEnd - 0.5)).zfill(2) + ':30')
+		if self.parentWidget.weekDayformat==0:
+			self.mondayfirst.setChecked(True)
+		else:
+			self.sundayfirst.setChecked(True)
+		if self.parentWidget.rankPri==0:
+			self.Rank1.setChecked(True)
+		else:
+			self.Rank1_2.setChecked(True)
 	def SaveSetting(self):
 		t1=int(self.schedule1.currentText()[0:2])
 		t2 = int(self.schedule2.currentText()[0:2])
@@ -354,9 +368,10 @@ class SettingLogic(QWidget,SettingUi):
 		#print(self.parentWidget.scheduleTimeEnd)
 		if self.group1.checkedButton() == self.mondayfirst:
 			self.parentWidget.calendarWidget.setFirstDayOfWeek(Qt.Monday)
+			self.parentWidget.weekDayformat=0
 		elif self.group1.checkedButton() == self.sundayfirst:
 			self.parentWidget.calendarWidget.setFirstDayOfWeek(Qt.Sunday)
-
+			self.parentWidget.weekDayformat = 1
 		if self.group2.checkedButton() == self.Rank1:
 			self.parentWidget.rankPri=0
 		elif self.group2.checkedButton() == self.Rank1_2:

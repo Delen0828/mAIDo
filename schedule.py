@@ -37,7 +37,7 @@ def filterTask(tasklist, maxWorkLoad):
 			otherWork.drop([bestIndex],inplace=True)
 			otherWork=otherWork[otherWork['Workload']<timediff]
 	if wkldToday>maxWorkLoad:
-		print('*****OVERLOAD*****')
+		# print('*****OVERLOAD*****')
 		overflow=-timediff
 		outTask=outTask.sort_values('Priority',ascending=True)
 		while overflow>0 and len(outTask)>0:
@@ -46,13 +46,13 @@ def filterTask(tasklist, maxWorkLoad):
 			outTask.drop([bestIndex],inplace=True)
 	return outTask
 	
-def schedule(Tasklist,maxWorkLoad):
+def schedule(Tasklist,lenHours):
 	Tasklist.sort_values(by=['Deadline','Priority'], ascending=[True, True], inplace=True)
 	daily=[]
 	for _,task in Tasklist.iterrows():
 		# print(task)
-		daily=daily+[task.Task]*task.Workload
-	if len(daily)<maxWorkLoad:
-		for _ in range(maxWorkLoad-len(daily)):
+		daily=daily+[task.Task]*int(task.Workload*2)
+	if len(daily)<lenHours:
+		for _ in range(lenHours-len(daily)):
 			daily.append('')
 	return daily

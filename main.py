@@ -242,17 +242,16 @@ class MainWindow(QWidget, Ui_Form):
 					'Priority': row[5],'Workload':row[6]}
 			self.add(item)
 		#print(self.Tasklist)
-	def generateSchedule(self,startTime=8,maxWorkLoad=10):
+	def generateSchedule(self):
 		# startTime is the starting time of a day
 		# maxWorkLoad is what amount of time user work everyday
 		# maxWorklaod+starTime should not exceed 23
 		if not self.Tasklist.empty:
-			self.maxWorkLoad=maxWorkLoad
+			self.maxWorkLoad=self.scheduleTimeEnd-self.scheduleTimeBegin
 			tempTaskList=self.Tasklist.copy()
 			# print(tempTaskList)
-			self.schedule=schedule(filterTask(tempTaskList,self.maxWorkLoad),self.maxWorkLoad)
-			print(tempTaskList,self.schedule)
-			self.hours=range(startTime,startTime+self.maxWorkLoad)
+			self.hours=range(int(2*self.scheduleTimeBegin),int(2*self.scheduleTimeEnd))
+			self.schedule=schedule(filterTask(tempTaskList,self.maxWorkLoad),len(self.hours))
 			self.scheduleTable=pd.DataFrame(index=self.hours,data=self.schedule,columns=['Task'])
 			self.scheduleTable=pd.DataFrame(self.scheduleTable.values.T,index=['Task'],columns=self.hours)
 			self.UpdateSchedule()
@@ -261,11 +260,11 @@ class MainWindow(QWidget, Ui_Form):
 
 	def UpdateSchedule(self):
 		self.model = QStandardItemModel(1, len(self.hours))
-		self.model.setHorizontalHeaderLabels([str(i)+':00' for i in self.hours])
+		self.model.setHorizontalHeaderLabels([str(i/2) for i in self.hours])
 		# self.scheduleTableView.horizontalHeader().setStyleSheet("QHeaderView::section{font:13pt \"Calibri\"}"
 		# print('test',self.scheduleTable[8])
 		for num in range(len(self.hours)):
-			self.model.setItem(0, num, QStandardItem(str(self.scheduleTable[num+8]['Task'])))
+			self.model.setItem(0, num, QStandardItem(str(self.scheduleTable[self.hours[num]]['Task'])))
 		self.scheduleTableView.setModel(self.model)
 
 	def setting(self):

@@ -18,7 +18,7 @@ def getTimeDiff(timeString):
 	temptime=time.mktime(time.strptime(timeString,'%y/%m/%d %H:%M'))-time.time()
 	return(temptime/3600) #transfer to hour
 	
-def filterTask(tasklist, maxWorkLoad):
+def filterTask(tasklist, maxWorkLoad, sortByWorkload):
 	# print(Tasklist)
 	Tasklist=tasklist.copy()
 	dueToday=Tasklist[isToday(Tasklist['Deadline'])]
@@ -29,7 +29,10 @@ def filterTask(tasklist, maxWorkLoad):
 		today=time.strftime('%y/%m/%d',time.localtime())
 		Tasklist['Date']=np.array(Tasklist['Deadline'].str.split(' ').to_list())[:,0]
 		# Tasklist['IsToday']= (Tasklist['Date']==[today]*len(Tasklist['Date']))
-		otherWork=Tasklist[Tasklist['Workload']<=timediff][Tasklist['Date']>today].sort_values('Priority',ascending=False)
+		if not sortByWorkload: #high priority first
+			otherWork=Tasklist[Tasklist['Workload']<=timediff][Tasklist['Date']>today].sort_values('Priority',ascending=False)
+		else:#low workload first
+			otherWork=Tasklist[Tasklist['Workload']<=timediff][Tasklist['Date']>today].sort_values('Workload',ascending=True)
 		while timediff>0 and len(otherWork)>0:
 			best,bestIndex=otherWork.iloc[0],otherWork.index.to_list()[0]
 			outTask=outTask.append(best,ignore_index=True)

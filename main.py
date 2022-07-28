@@ -251,7 +251,7 @@ class MainWindow(QWidget, Ui_Form):
 			tempTaskList=self.Tasklist.copy()
 			# print(tempTaskList)
 			self.hours=range(int(2*self.scheduleTimeBegin),int(2*self.scheduleTimeEnd))
-			self.schedule=schedule(filterTask(tempTaskList,self.maxWorkLoad),len(self.hours))
+			self.schedule=schedule(filterTask(tempTaskList,self.maxWorkLoad,self.rankPri),len(self.hours))
 			self.scheduleTable=pd.DataFrame(index=self.hours,data=self.schedule,columns=['Task'])
 			self.scheduleTable=pd.DataFrame(self.scheduleTable.values.T,index=['Task'],columns=self.hours)
 			self.UpdateSchedule()

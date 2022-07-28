@@ -8,7 +8,7 @@ a = Analysis(
     ['LoginLogic.py'],
     pathex=[],
     binaries=[],
-    datas=[],
+    datas=[('setting.png', './')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

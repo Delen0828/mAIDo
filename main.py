@@ -174,7 +174,7 @@ class MainWindow(QWidget, Ui_Form):
 	def add(self,Item=None):
 		if Item==None:
 			item = {'√': False, 'Task': str(self.textEdit.toPlainText())+'\t', 'Deadline': self.comboBox_year.currentText()[2:4]+"/"+self.comboBox_month.currentText()+"/"+self.comboBox_day.currentText()+" "+self.comboBox_hour.currentText(),
-				'Priority': self.comboBox.currentIndex(),'Workload':int(self.WorkLoadCombo.currentText())}
+				'Priority': self.comboBox.currentIndex(),'Workload':int(self.WorkLoadCombo.currentText()[0])}
 		else:
 			item=Item
 			item['Task']=str(item['Task'])
@@ -260,7 +260,13 @@ class MainWindow(QWidget, Ui_Form):
 
 	def UpdateSchedule(self):
 		self.model = QStandardItemModel(1, len(self.hours))
-		self.model.setHorizontalHeaderLabels([str(i/2) for i in self.hours])
+		labellist=[]
+		for i in self.hours:
+			if i%2==0:
+				labellist.append(str(int(i/2))+':00')
+			else:
+				labellist.append(str(int((i-1)/2))+':30')
+		self.model.setHorizontalHeaderLabels(labellist)
 		# self.scheduleTableView.horizontalHeader().setStyleSheet("QHeaderView::section{font:13pt \"Calibri\"}"
 		# print('test',self.scheduleTable[8])
 		for num in range(len(self.hours)):

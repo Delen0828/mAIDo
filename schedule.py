@@ -29,10 +29,12 @@ def filterTask(tasklist, maxWorkLoad, sortByWorkload):
 		today=time.strftime('%y/%m/%d',time.localtime())
 		Tasklist['Date']=np.array(Tasklist['Deadline'].str.split(' ').to_list())[:,0]
 		# Tasklist['IsToday']= (Tasklist['Date']==[today]*len(Tasklist['Date']))
+		# print(sortByWorkload)
 		if not sortByWorkload: #high priority first
 			otherWork=Tasklist[Tasklist['Workload']<=timediff][Tasklist['Date']>today].sort_values('Priority',ascending=False)
 		else:#low workload first
-			otherWork=Tasklist[Tasklist['Workload']<=timediff][Tasklist['Date']>today].sort_values('Workload',ascending=True)
+			otherWork=Tasklist[Tasklist['Workload']<=timediff][Tasklist['Date']>today].sort_values('Workload',ascending=False)
+		# print(otherWork)
 		while timediff>0 and len(otherWork)>0:
 			best,bestIndex=otherWork.iloc[0],otherWork.index.to_list()[0]
 			outTask=outTask.append(best,ignore_index=True)
@@ -50,7 +52,7 @@ def filterTask(tasklist, maxWorkLoad, sortByWorkload):
 	return outTask
 	
 def schedule(Tasklist,lenHours):
-	Tasklist.sort_values(by=['Deadline','Priority'], ascending=[True, True], inplace=True)
+	# Tasklist.sort_values(by=['Deadline','Priority'], ascending=[True, True], inplace=True)
 	daily=[]
 	for _,task in Tasklist.iterrows():
 		# print(task)

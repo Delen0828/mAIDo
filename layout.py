@@ -96,7 +96,7 @@ class Ui_Form(object):
 		self.calendarWidget.setStyleSheet("font:bold 13pt \"Calibri\";")
 		self.calendarWidget.setObjectName("calendarWidget")
 		self.label = QtWidgets.QLabel(Form)
-		self.label.setGeometry(QtCore.QRect(160, 30, 171, 71))
+		self.label.setGeometry(QtCore.QRect(160, 30, 220, 71))
 		self.label.setStyleSheet("font:bold 56pt \"Calibri\";")
 		self.label.setObjectName("label")
 		self.schedulelabel = QtWidgets.QLabel(Form)

@@ -158,6 +158,7 @@ class Ui_Form(object):
 		self.PriorityLabel.setObjectName("PriorityLabel")
 #=============================================================================================================
 		self.tableWidget.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
+		self.tableWidget.verticalHeader().hide()
 		self.calendarWidget.setVerticalHeaderFormat(0)
 		self.calendarWidget.setHorizontalHeaderFormat(QtWidgets.QCalendarWidget.HorizontalHeaderFormat.SingleLetterDayNames)
 		#self.calendarWidget.setNavigationBarVisible(0)

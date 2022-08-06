@@ -2,6 +2,9 @@
 ## Alpha Release
 
 v1.0.0-alpha is the executable we submit for alpha release. You can find it in the "Releases", and simply download mAIDo-alpha.exe to enjoy mAIDo.
+## Omega Release
+
+Similarly, download the v2.0.0 release, and loginlogic.exe is our main executor
 ## Objectives
 
 1. Software framework with functions of adding & remove tasks, calendar view

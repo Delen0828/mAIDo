@@ -190,6 +190,6 @@ class Ui_Form(object):
 		self.DueTimeLabel.setText(_translate("Form", "Due Time"))
 		self.PriorityLabel.setText(_translate("Form", "Priority"))
 		self.WorkLoad.setText(_translate("Form", "Workload"))
-		self.generateButton.setText(_translate("Form","Generate"))
+		self.generateButton.setText(_translate("Form","Schedule"))
 
 

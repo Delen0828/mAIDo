@@ -6,3 +6,6 @@ QHeaderView::section {
     text-transform: none;
 }
 
+QWidget {
+  background-color: none;
+}

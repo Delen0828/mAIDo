@@ -24,6 +24,15 @@ class Ui_Form(object):
 		self.AddButton.setGeometry(QtCore.QRect(980, 30, 81, 41))
 		self.AddButton.setObjectName("AddButton")
 		self.AddButton.setStyleSheet("font:12pt \"Calibri\";")
+
+		self.listButton = QtWidgets.QPushButton(Form)
+		self.listButton.setGeometry(QtCore.QRect(980, 75, 81, 41))
+		self.listButton.setObjectName("listButton")
+		self.listButton.setStyleSheet("font:12pt \"Calibri\";")
+
+
+
+
 		# self.loadButton = QtWidgets.QPushButton(Form)
 		# self.loadButton.setGeometry(QtCore.QRect(460, 80, 70, 41))
 		# self.loadButton.setStyleSheet("font: 12pt \"Calibri\";")
@@ -167,6 +176,7 @@ class Ui_Form(object):
 		self.calendarWidget.setAutoFillBackground(False)
 		# self.calendarWFidget.ShowToday()
 		self.AddButton.clicked.connect(lambda: Form.add())
+		self.listButton.clicked.connect(lambda :Form.listshow())
 		self.generateButton.clicked.connect(lambda: Form.generateSchedule())
 		#self.loadButton.clicked.connect(lambda: Form.loadTaskList())
 		self.settingButton.clicked.connect(lambda: Form.setting())
@@ -179,6 +189,7 @@ class Ui_Form(object):
 	def retranslateUi(self, Form):
 		_translate = QtCore.QCoreApplication.translate
 		Form.setWindowTitle(_translate("Form", "mAIDo-demo"))
+		self.listButton.setText(_translate("Form", "list"))
 		self.AddButton.setText(_translate("Form", "Add"))
 		self.comboBox.setItemText(1, _translate("Form", "Avg"))
 		self.comboBox.setItemText(2, _translate("Form", "High"))

@@ -8,6 +8,7 @@ from PyQt5.QtGui import *
 from layout import Ui_Form
 from edit import EditUi
 from Setting import SettingUi
+from listui import  listUi
 import sys
 # import functools
 import numpy as np
@@ -16,14 +17,31 @@ import pandas as pd
 from qt_material import apply_stylesheet
 from encrypt import *
 from schedule import *
-
+from tray import TrayIcon
+from PyQt5.QtWidgets import QShortcut
+from PyQt5.QtGui import QKeySequence
+from system_hotkey import SystemHotkey
+from PyQt5.QtCore import QObject,pyqtSignal
+from listwindowAdd import listwindowAddUi
+from style import addstyle
 #=============================================  css_content  ==========================================
-addstyle='''
+addstyle2='''
 QPushButton {
 	text-transform: none;
 }
 QHeaderView::section {
 	text-transform: none;
+}
+
+QListView::item {
+  
+  color: #000000;
+  padding: 3px;
+  min-height: 5px;
+  
+}
+QListView{
+  background-color:#ffffff;
 }
 '''
 #=============================================  css_content  ==========================================
@@ -34,7 +52,9 @@ pathtxt=os.path.join(os.getcwd(),'data','task.txt')
 PriorityDict = {0: 'Low', 1: 'Avg', 2: 'High'}
 
 
-class MainWindow(QWidget, Ui_Form):
+class MainWindow(QWidget, Ui_Form,QObject):
+	sig_keyhot = pyqtSignal(str)
+
 	def __init__(self):
 		super().__init__()
 		##setting
@@ -56,11 +76,26 @@ class MainWindow(QWidget, Ui_Form):
 		self.Username=None
 		self.Pass=None
 		self.otherStoredTasks=None
+		self.listwindow=None
+		self.windowlist=[]
+		self.Tlist=[]
+		self.listshow()
+		self.tray = TrayIcon(self)
+		#self.windowlist.append(self)
+		#QShortcut(QKeySequence(self.tr("Insert")), self, self.hidelistwindow)
+		self.sig_keyhot.connect(self.MKey_pressEvent)
+		self.hk_start = SystemHotkey()
+		self.hk_start.register(('control','1'), callback=lambda x: self.send_key_event("hide"))
 
-
-
-
-
+	def MKey_pressEvent(self, i_str):
+		self.hidelistwindow()
+	def send_key_event(self, i_str):
+		self.sig_keyhot.emit(i_str)
+	def hidelistwindow(self):
+		if self.listwindow.isVisible()==0:
+			self.listwindow.show()
+		else:
+			self.listwindow.hide()
 	def test(self):
 		pass
 	def Comboini(self):
@@ -185,6 +220,7 @@ class MainWindow(QWidget, Ui_Form):
 			self.tableWidget.setRowCount(self.TaskNum)
 			self.sortTaskList()
 			self.UpdateTable()
+			#self.Updatelistwindow()
 			self.highLight(item['Deadline'])
 		else:
 			self.messageDialog('invalidDate')
@@ -196,7 +232,7 @@ class MainWindow(QWidget, Ui_Form):
 			i = item.row()
 			ind.append(self.Tasklist.iloc[i].name)
 		return ind
-	
+
 	def Delete(self):
 		ind = []
 		if len(self.tableWidget.selectedItems()) != 0:
@@ -206,6 +242,7 @@ class MainWindow(QWidget, Ui_Form):
 		self.sortTaskList()
 		self.UpdateTable()
 		self.updateCheck()
+		self.Updatelistwindow()
 		#self.saveTaskList()
 
 	def Edit(self):
@@ -216,11 +253,19 @@ class MainWindow(QWidget, Ui_Form):
 		#print(record)
 		self.child = EditLogic(self,record)
 		self.child.show()
-	
+		#self.windowlist.append(self.child)
+
 	def closeEvent(self,event):
-		if self.child!=None:
-			self.child.close()
-		self.saveTaskList()
+		popout=QMessageBox.question(self,'最小化','是否最小化', QMessageBox.Yes|QMessageBox.No,QMessageBox.No)
+		if popout==QMessageBox.No:
+			if self.child!=None:
+				self.child.close()
+			self.saveTaskList()
+		else:
+			event.ignore()
+			self.hide()
+			self.tray.show()
+
 
 	def saveTaskList(self):
 		dict={'Username':str(self.Username),'Password':self.Pass,'√': False, 'Task': ' ', 'Deadline': ' ',
@@ -278,6 +323,24 @@ class MainWindow(QWidget, Ui_Form):
 		self.setFocusPolicy(Qt.NoFocus)
 		self.child = SettingLogic(self)
 		self.child.show()
+
+	def listshow(self):
+		if self.listwindow==None:
+			self.listwindow=listWindow(self)
+		else:
+			if self.listwindow.isVisible()==1:
+				self.listwindow.close()
+			else:
+				self.listwindow.show()
+	def Updatelistwindow(self):
+		curenttask=np.array(self.Tasklist['Task'])
+		self.Tlist=[]
+		for item in curenttask:
+			item=item.replace('\t','')
+			self.Tlist.append(item)
+		self.listwindow.updatelist()
+		print (self.Tlist)
+
 #==================================================================================================
 #edit 窗口
 class EditLogic(QWidget,EditUi):
@@ -381,15 +444,94 @@ class SettingLogic(QWidget,SettingUi):
 	def closeEvent(self,event):
 		self.parentWidget.setFocusPolicy(Qt.StrongFocus)
 		self.parentWidget.setEnabled(True)
+#==================================================================================================
+#list 窗口
 
+class listWindow(QWidget,listUi):
+	def __init__(self, parent):
+		super().__init__()
+		self.setupUi(self)
+		self.setWindowFlags(Qt.WindowCloseButtonHint|Qt.WindowStaysOnTopHint|Qt.Tool)
+
+		self.parentWidget=parent
+		self.listWidget.setDragDropMode(QListWidget.InternalMove)
+		#self.setStyleSheet("background-color: none ")
+		##右键菜单事件
+		self.listWidget.setContextMenuPolicy(Qt.CustomContextMenu)
+		self.listWidget.customContextMenuRequested.connect(self.custom_right_menu)
+		#self.listWidget.addItem("Item 3")
+		#self.listWidget.addItem("Item 4")
+		self.move(1550,0)
+	def custom_right_menu(self,pos):
+		#print("呼出菜单")
+		self.menu = QMenu()
+		self.opt1 = self.menu.addAction('remove')
+		self.opt2 = self.menu.addMenu('color')
+		self.opt3=self.opt2.addAction('red')
+		self.opt4=self.opt2.addAction('yellow')
+		self.opt5=self.opt2.addAction('green')
+		if len(self.listWidget.selectedItems())==0:
+			self.menu.actions()[0].setEnabled(False)
+			self.menu.actions()[1].setEnabled(False)
+		self.opt1.triggered.connect(self.remove)
+		self.menu.popup(QCursor.pos())
+		self.opt3.triggered.connect(lambda :self.setbkg('red'))
+		self.opt4.triggered.connect(lambda: self.setbkg('yellow'))
+		self.opt5.triggered.connect(lambda: self.setbkg('green'))
+	def remove(self):
+		#print('remove')
+		selected_row = self.listWidget.currentRow()
+		item = self.listWidget.takeItem(selected_row)
+		del item
+	def setbkg(self,str):
+		color=''
+		if str=='red':
+			#print('设置成red')
+			color=QColor('red')
+		elif str=='yellow':
+			color = QColor('yellow')
+		elif str=='green':
+			color=QColor('greenyellow')
+		selected_row = self.listWidget.currentRow()
+		item = self.listWidget.item(selected_row)
+		item.setBackground(color)
+		#print(item)
+	def updatelist(self):
+		self.listWidget.clear()
+		self.listWidget.addItems(self.parentWidget.Tlist)
+	def listwindowadd(self):
+		self.listaddwindow=listAdd(self)
+		self.listaddwindow.show()
+	def mousePressEvent(self,event):
+		#print('点击')
+		y=event.y()
+		#print(event.pos())
+		if y<self.listWidget.y():
+			#print('取消选择')
+			self.listWidget.clearSelection()
+
+
+#==================================================================================================
+#listAdd 窗口
+class listAdd(QWidget,listwindowAddUi):
+	def __init__(self, parent):
+		super().__init__()
+		self.setupUi(self)
+		self.setWindowFlags( Qt.WindowStaysOnTopHint| Qt.Tool)
+		self.parentWidget = parent
+	def Add(self):
+		text=self.lineEdit.text()
+		self.parentWidget.listWidget.addItem(text)
+		self.close()
 if __name__ == '__main__':
 	QCoreApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
 	QCoreApplication.setAttribute(Qt.AA_UseHighDpiPixmaps)
 	app = QApplication(sys.argv)
+	#stylesheet = app.styleSheet()
 	apply_stylesheet(app, theme='dark_teal.xml')
-	stylesheet = app.styleSheet()
-	#print(stylesheet)
-	app.setStyleSheet(stylesheet + addstyle)
+	stylesheet=app.styleSheet()
+	#print(stylesheet2)
+	app.setStyleSheet(addstyle+addstyle2)
 
 	window = MainWindow()
 	window.show()

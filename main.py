@@ -1,6 +1,8 @@
 import os.path
 from msilib.schema import tables
 import PyQt5
+from PyQt5 import QtWidgets, QtCore, QtGui
+import pandas
 from PyQt5.Qt import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
@@ -24,6 +26,17 @@ from system_hotkey import SystemHotkey
 from PyQt5.QtCore import QObject,pyqtSignal
 from listwindowAdd import listwindowAddUi
 from style import addstyle
+from sqlalchemy import create_engine
+from sqlalchemy import text
+
+from sqlalchemy.types import DATE,CHAR,VARCHAR,TEXT,DATETIME
+import urllib.parse
+import pymysql
+
+
+#连接mysql
+db=pymysql.connect(user='root',password='dls123',host='127.0.0.1',port=3306,charset = 'utf8')
+cur = db.cursor()
 #=============================================  css_content  ==========================================
 addstyle2='''
 QPushButton {
@@ -50,12 +63,13 @@ iv=b'\xfd\xa2\x1d8\xe9\xc3z3\x1fs\x91$\xc0\xb1\x9a\xc4'
 path=os.path.join(os.getcwd(),'data','task.csv')
 pathtxt=os.path.join(os.getcwd(),'data','task.txt')
 PriorityDict = {0: 'Low', 1: 'Avg', 2: 'High'}
-
+def get_df_from_db_1(sql):
+    return pd.read_sql(sql,db)
 
 class MainWindow(QWidget, Ui_Form,QObject):
 	sig_keyhot = pyqtSignal(str)
 
-	def __init__(self):
+	def __init__(self,str=None):
 		super().__init__()
 		##setting
 		self.weekDayformat = 0
@@ -74,18 +88,22 @@ class MainWindow(QWidget, Ui_Form,QObject):
 		self.calendarini()
 		self.child=None
 		self.Username=None
+		if str is not None:
+			self.Username=str
 		self.Pass=None
 		self.otherStoredTasks=None
 		self.listwindow=None
-		self.windowlist=[]
+		self.windowlist=None
 		self.Tlist=[]
 		self.listshow()
+		self.listwindowini()
 		self.tray = TrayIcon(self)
 		#self.windowlist.append(self)
 		#QShortcut(QKeySequence(self.tr("Insert")), self, self.hidelistwindow)
 		self.sig_keyhot.connect(self.MKey_pressEvent)
 		self.hk_start = SystemHotkey()
 		self.hk_start.register(('control','1'), callback=lambda x: self.send_key_event("hide"))
+
 
 	def MKey_pressEvent(self, i_str):
 		self.hidelistwindow()
@@ -98,6 +116,24 @@ class MainWindow(QWidget, Ui_Form,QObject):
 			self.listwindow.hide()
 	def test(self):
 		pass
+	def listwindowini(self):
+		#print('aaa')
+		df=None
+		if self.Username is not None:
+			#print('aaa')
+			sql="SELECT * FROM maido.listwindow WHERE user='%s'" %self.Username
+			df=get_df_from_db_1(sql)
+			self.windowlist=df
+			#print(df)
+		for index, row in df.iterrows():
+			item=QListWidgetItem()
+			item.setData(Qt.UserRole,row['taskname'])
+			item.setData(Qt.UserRole+1,row['color'])
+			item.setData(Qt.UserRole+2,row['deadline'])
+			item.setText(item.data(Qt.UserRole))
+			item.setBackground(QColor(item.data(Qt.UserRole+1)))
+			self.listwindow.listWidget.addItem(item)
+
 	def Comboini(self):
 		date=QDate.currentDate()
 		time=QTime.currentTime()
@@ -261,6 +297,33 @@ class MainWindow(QWidget, Ui_Form,QObject):
 			if self.child!=None:
 				self.child.close()
 			self.saveTaskList()
+			#保存listwindow
+			count=self.listwindow.listWidget.count()
+			sql = "DELETE FROM maido.listwindow WHERE user='%s'"%self.Username
+			#print(sql)
+			try:
+				cur.execute(sql)
+				db.commit()
+			except:
+				# 如果发生错误则回滚
+				db.rollback()
+				print("删除失败")
+			newdf=pd.DataFrame(columns=["taskname","color","deadline","user"])
+			for i in range (count):
+				curitem=self.listwindow.listWidget.item(i)
+				data={'taskname':curitem.data(Qt.UserRole),'color':curitem.data(Qt.UserRole+1),'deadline':curitem.data(Qt.UserRole+2),'user':self.Username}
+				newdf.loc[len(newdf),:]=data
+			#print(newdf)
+			DTYPES = {"taskname": TEXT, "color": CHAR(20), "deadline": DATETIME,"user":VARCHAR(45)}
+			engine=create_engine('mysql+pymysql://root:dls123@127.0.0.1:3306/maido?charset=utf8',echo=True)
+			try:
+					newdf.to_sql('listwindow',con=engine,if_exists='append',index=False,dtype=DTYPES,chunksize=50)
+					print(">>> All good.")
+			except Exception as e:
+				print(">>> Something went wrong!")
+				db.close()
+				cur.close()
+			QtWidgets.qApp.quit()
 		else:
 			event.ignore()
 			self.hide()
@@ -470,6 +533,7 @@ class listWindow(QWidget,listUi):
 		self.opt3=self.opt2.addAction('red')
 		self.opt4=self.opt2.addAction('yellow')
 		self.opt5=self.opt2.addAction('green')
+		self.opt6=self.opt2.addAction('none')
 		if len(self.listWidget.selectedItems())==0:
 			self.menu.actions()[0].setEnabled(False)
 			self.menu.actions()[1].setEnabled(False)
@@ -478,6 +542,7 @@ class listWindow(QWidget,listUi):
 		self.opt3.triggered.connect(lambda :self.setbkg('red'))
 		self.opt4.triggered.connect(lambda: self.setbkg('yellow'))
 		self.opt5.triggered.connect(lambda: self.setbkg('green'))
+		self.opt6.triggered.connect(lambda:self.setbkg('white'))
 	def remove(self):
 		#print('remove')
 		selected_row = self.listWidget.currentRow()
@@ -492,9 +557,12 @@ class listWindow(QWidget,listUi):
 			color = QColor('yellow')
 		elif str=='green':
 			color=QColor('greenyellow')
+		elif str=='white':
+			color=QColor('white')
 		selected_row = self.listWidget.currentRow()
 		item = self.listWidget.item(selected_row)
 		item.setBackground(color)
+		item.setData(Qt.UserRole+1,str)
 		#print(item)
 	def updatelist(self):
 		self.listWidget.clear()
@@ -520,8 +588,14 @@ class listAdd(QWidget,listwindowAddUi):
 		self.setWindowFlags( Qt.WindowStaysOnTopHint| Qt.Tool)
 		self.parentWidget = parent
 	def Add(self):
-		text=self.lineEdit.text()
-		self.parentWidget.listWidget.addItem(text)
+		text = self.lineEdit.text()
+		item=QListWidgetItem()
+		item.setData(Qt.UserRole,text)
+		item.setData(Qt.UserRole+1,'white')
+		item.setData(Qt.UserRole+2,None)
+		item.setData(Qt.UserRole+3,self.parentWidget.parentWidget.Username)
+		item.setText(text)
+		self.parentWidget.listWidget.addItem(item)
 		self.close()
 if __name__ == '__main__':
 	QCoreApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
@@ -533,7 +607,8 @@ if __name__ == '__main__':
 	#print(stylesheet2)
 	app.setStyleSheet(addstyle+addstyle2)
 
-	window = MainWindow()
+	window = MainWindow('dls')
 	window.show()
+
 	sys.exit(app.exec_())
 

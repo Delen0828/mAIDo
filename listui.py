@@ -9,7 +9,18 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+def mousepressdec(_class):
+    def mousePressEvent(self,event):
+        super().mousePressEvent(event)
+    setattr(_class, 'mousePressEvent', mousePressEvent)
+    return _class  # Decorated class
 
+class mylistwidget(QtWidgets.QListWidget):
+    def __init__(self,parent):
+        super().__init__(parent)
+    def mousePressEvent(self,event):
+        self.clearSelection()
+        super().mousePressEvent(event)
 
 class listUi(object):
     def setupUi(self, Form):
@@ -51,7 +62,7 @@ class listUi(object):
         self.toolButton.setObjectName("toolButton")
         self.horizontalLayout_2.addWidget(self.toolButton)
         self.verticalLayout_3.addWidget(self.frame, 0, QtCore.Qt.AlignLeft)
-        self.listWidget = QtWidgets.QListWidget(Form)
+        self.listWidget = mylistwidget(Form)
         self.listWidget.setObjectName("listWidget")
         self.verticalLayout_3.addWidget(self.listWidget)
         self.verticalLayout_3.setStretch(1, 20)
@@ -59,9 +70,9 @@ class listUi(object):
         self.toolButton_2.clicked.connect(lambda: Form.listwindowadd())
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
-
+        #self.listWidget=mousepressdec(self.listWidget)
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Form"))
         self.toolButton_2.setText(_translate("Form", "Add"))
-        self.toolButton.setText(_translate("Form", "Option"))
+        self.toolButton.setText(_translate("Form", "Sort"))

@@ -28,3 +28,4 @@ def decrypt(filepath,key,iv):
 
 if __name__ == '__main__':
     decrypt(os.path.join(os.getcwd(),'data','task.csv'),key,iv)
+    #encrypt(os.path.join(os.getcwd(), 'data', 'task.csv'), key, iv)

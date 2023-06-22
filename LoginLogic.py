@@ -15,18 +15,38 @@ from encrypt import *
 # import numpy as np
 import pandas as pd
 from qt_material import apply_stylesheet
+from style import addstyle
 #=============================================  css_content  ==========================================
-addstyle='''QPushButton {
-    text-transform: none;
+addstyle2 = '''
+QPushButton {
+	text-transform: none;
 }
 QHeaderView::section {
-    text-transform: none;
-}'''
+	text-transform: none;
+}
+
+QListView::item {
+
+  color: #000000;
+  padding: 3px;
+  min-height: 5px;
+
+}
+QListView{
+  background-color:#ffffff;
+}
+'''
 #=============================================  css_content  ==========================================
 key=b'\xc2\xb5a\x87\xb4\x90\xb9\xa7\xb5\x9a\xfc\xa1\x89&\xfa\xbd\xdc\x15\x16\x87\x97\xd8\xfc\x8e\xef\xd5\xd2\x98\xc0yQ7'
 iv=b'\xfd\xa2\x1d8\xe9\xc3z3\x1fs\x91$\xc0\xb1\x9a\xc4'
 path=os.path.join(os.getcwd(),'data','task.csv')
 pathtxt=os.path.join(os.getcwd(),'data','task.txt')
+txtpath=os.path.join(os.getcwd(),'data','rem')
+f=open(txtpath)
+a=f.readlines()
+for i,item in enumerate(a):
+    a[i]=item.rstrip('\n')
+f.close()
 class LoginWindowLogic(QWidget, Login_Ui_Form):
     def __init__(self):
         super().__init__()
@@ -34,9 +54,12 @@ class LoginWindowLogic(QWidget, Login_Ui_Form):
         self.setWindowIcon(QIcon('icon.ico'))
         self.setupUi(self)
         self.LoginButton.clicked.connect(self.login)
-        self.Mainwindow = MainWindow()
         if not os.path.exists(os.path.join(os.getcwd(),'data')):
             os.makedirs(os.path.join(os.getcwd(),'data'))
+        if a[0]=='Yes':
+            self.UserNameTextEdit.setText(a[1])
+            self.passWordTextEdit.setText(a[2])
+            self.checkBox.setChecked(True)
 
     def messageDialog(self,type):
         if type=='inform':
@@ -95,11 +118,25 @@ class LoginWindowLogic(QWidget, Login_Ui_Form):
                 loadTasklist['Password'] = loadTasklist['Password'].astype('str')
                 loadPass=loadTasklist[loadTasklist['Username']==username]['Password'].unique()
                 if shalPass==loadPass :
+                    self.Mainwindow = MainWindow(username)
                     self.messageDialog('inform')
                     self.load(username,shalPass,loadTasklist)
                     self.Mainwindow.show()
                     encrypt(path,key,iv)
+                    if self.checkBox.isChecked()==True:
+                        f=open(txtpath,'w')
+                        f.write('Yes\n')
+                        f.write(username+'\n')
+                        f.write(self.passWordTextEdit.text())
+                        f.close()
+                    else:
+                        f = open(txtpath, 'w')
+                        f.write('No\n')
+                        f.write(a[1]+'\n')
+                        f.write(a[2])
+                        f.close()
                     self.close()
+
                 else:
                     self.messageDialog('error')
             else:
@@ -110,10 +147,24 @@ class LoginWindowLogic(QWidget, Login_Ui_Form):
                     loadTasklist=loadTasklist.append(newItem,ignore_index=True)
                     loadTasklist.to_csv(r'data/task.csv', index=False)
                     self.messageDialog('reg')
+                    self.Mainwindow = MainWindow(username)
                     self.load(username, shalPass,loadTasklist)
                     self.Mainwindow.show()
                     encrypt(path,key,iv)
+                    if self.checkBox.isChecked()==True:
+                        f=open(txtpath,'w')
+                        f.write('Yes\n')
+                        f.write(username+'\n')
+                        f.write(self.passWordTextEdit.text())
+                        f.close()
+                    else:
+                        f = open(txtpath, 'w')
+                        f.write('No\n')
+                        f.write(a[1]+'\n')
+                        f.write(a[2])
+                        f.close()
                     self.close()
+
             encrypt(path, key, iv)
         except:
             self.messageDialog('Value Error')
@@ -126,9 +177,7 @@ if __name__ == '__main__':
     apply_stylesheet(app, theme='dark_teal.xml')
     stylesheet = app.styleSheet()
     #print(stylesheet)
-
-    app.setStyleSheet(stylesheet + addstyle)
-
+    app.setStyleSheet(stylesheet + addstyle2)
     window = LoginWindowLogic()
     window.show()
     sys.exit(app.exec_())

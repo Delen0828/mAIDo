@@ -94,6 +94,8 @@ def getWidget(str=''):
     else:
         widget.setStyleSheet('border-width: 2px;border-style: solid;border-color: rgb(255, 255, 255)')
     return widget
+
+
 class MainWindow(QWidget, Ui_Form,QObject):
     sig_keyhot = pyqtSignal(str)
 
@@ -155,17 +157,20 @@ class MainWindow(QWidget, Ui_Form,QObject):
             #print(df)
         for index, row in df.iterrows():
             item=QListWidgetItem()
+            widget=customQListWidgetItem()
             item.setData(Qt.UserRole,row['taskname'])
             item.setData(Qt.UserRole+1,row['color'])
             item.setData(Qt.UserRole+2,row['deadline'])
             item.setData(Qt.UserRole+4,row['isdaily'])
-            item.setText(item.data(Qt.UserRole))
-            #item.setBackground(QColor(item.data(Qt.UserRole+1)))
+            #widget=getWidget(row['color'])
+            widget.setBorderColor(row['color'])
+
             if row['isdaily'] == 0:
                 item.setToolTip("Due On " + row['deadline'].strftime('%Y-%m-%d'))
+                widget.label.setText(row['taskname'])
             else:
                 item.setToolTip('Daily task')
-            widget=getWidget(row['color'])
+                widget.label.setText('Daily Task: '+row['taskname'])
             self.listwindow.listWidget.addItem(item)
             self.listwindow.listWidget.setItemWidget(item, widget)
 
@@ -576,9 +581,14 @@ class listWindow(QWidget,listUi):
             color=curitem.data(Qt.UserRole+1)
             grad = PyQt5.QtGui.QLinearGradient(QPoint(self.listWidget.visualItemRect(curitem).topLeft()),
                                                 QPoint(self.listWidget.visualItemRect(curitem).topRight()))
-            grad.setColorAt(0.92, Qt.white)
-            grad.setColorAt(0.92001, QColor(color))
-            grad.setColorAt(1, QColor(color))
+            if color=='green':
+                grad.setColorAt(0.92, Qt.white)
+                grad.setColorAt(0.92001, Qt.green)
+                grad.setColorAt(1, Qt.green)
+            else:
+                grad.setColorAt(0.92, Qt.white)
+                grad.setColorAt(0.92001, QColor(color))
+                grad.setColorAt(1, QColor(color))
             curitem.setBackground(grad)
 
     def custom_right_menu(self,pos):
@@ -607,9 +617,13 @@ class listWindow(QWidget,listUi):
         if ok:
             selected_row = self.listWidget.currentRow()
             item = self.listWidget.item(selected_row)
-            item.setText(str(text))
+            item.setData(Qt.UserRole,str(text))
+            widget2 = customQListWidgetItem()
+            widget2.label.setText(text)
+            widget2.setBorderColor(item.data(Qt.UserRole+1))
             if item.data(Qt.UserRole+4)==1:
-                item.setText('Daily Task: '+str(text))
+                widget2.label.setText('Daily Task: '+str(text))
+            item.listWidget().setItemWidget(item,widget2)
     def remove(self):
         #print('remove')
         selected_row = self.listWidget.currentRow()
@@ -619,7 +633,7 @@ class listWindow(QWidget,listUi):
         color=''
         selected_row = self.listWidget.currentRow()
         item = self.listWidget.item(selected_row)
-        widget=getWidget(str)
+        widget=customQListWidgetItem()
         #print(QPoint(self.listWidget.visualItemRect(item).topLeft()))
         self.listWidget.visualItemRect(item).topLeft()
         color = PyQt5.QtGui.QLinearGradient(QPoint(self.listWidget.visualItemRect(item).topLeft()),
@@ -641,7 +655,11 @@ class listWindow(QWidget,listUi):
         elif str=='white':
             color=QColor('white')
 
-
+        #widget=getWidget(str)
+        widget.setBorderColor(str)
+        widget.label.setText(item.data(Qt.UserRole))
+        if item.data(Qt.UserRole+4)==1:
+            widget.label.setText('Daily Task: '+item.data(Qt.UserRole))
         item.setBackground(color)
         item.setData(Qt.UserRole+1,str)
         self.listWidget.setItemWidget(item,widget)
@@ -671,6 +689,35 @@ class listWindow(QWidget,listUi):
 
 #==================================================================================================
 #listAdd 窗口
+
+class customQListWidgetItem(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.label=QLabel()
+        self.pic=QLabel()
+        self.pic.setPixmap(QPixmap('cross.jpg').scaled(15, 20))
+        #self.label.setFrameShape(QtWidgets.QFrame.Box)
+        #self.label.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.hbox = QHBoxLayout()
+        self.hbox.addWidget(self.pic)
+        self.hbox.addWidget(self.label)
+        self.hbox.setContentsMargins(0, 0, 0, 0)
+        self.hbox.setSpacing(0)
+        self.hbox.setStretch(1,10)
+        #self.setStyleSheet('background-color: transparent')
+        self.setLayout(self.hbox)
+    def setBorderColor(self,str):
+        if str == 'red':
+            self.label.setStyleSheet('border-width: 1px;border-style: solid;border-color: rgb(255, 0, 0); color: rgb(0,0,0)')
+        elif str == 'yellow':
+            self.label.setStyleSheet('border-width: 1px;border-style: solid;border-color: rgb(255, 255, 0); color: rgb(0,0,0)')
+        elif str == 'green':
+            self.label.setStyleSheet('border-width: 1px;border-style: solid;border-color: rgb(0, 255, 0); color: rgb(0,0,0)')
+        else:
+            self.label.setStyleSheet('border-width: 1px;border-style: solid;border-color: rgb(255, 255, 255); color: rgb(0,0,0)')
+    def refreshlayout(self):
+        self.setLayout(self.hbox)
+
 class listAdd(QWidget,listwindowAddUi):
     def __init__(self, parent):
         super().__init__()
@@ -679,6 +726,7 @@ class listAdd(QWidget,listwindowAddUi):
         self.parentWidget = parent
     def Add(self):
         text = self.lineEdit.text()
+        widget2=customQListWidgetItem()
         item=QListWidgetItem()
         item.setData(Qt.UserRole,text)
         item.setData(Qt.UserRole+1,'white')
@@ -686,14 +734,17 @@ class listAdd(QWidget,listwindowAddUi):
         item.setData(Qt.UserRole+2,datetxt)
         item.setData(Qt.UserRole+3,self.parentWidget.parentWidget.Username)
         item.setData(Qt.UserRole+4,self.checkBox.isChecked())
-        item.setText(text)
-        widget=getWidget()
+        #item.setText(text)
+        #item2.setText('abababab')
+        widget2.label.setText(text)
+        widget2.setBorderColor('white')
+        #widget=getWidget('white')
         if item.data(Qt.UserRole+4)==False:
             item.setToolTip("Due On "+datetxt)
 
         else:
             item.setToolTip('Daily task')
-            item.setText('Daily Task: ' + text)
+            widget2.label.setText('Daily Task: ' + text)
         if text=='':
             msg_box = QMessageBox(QMessageBox.Critical, 'Error', 'Task name can not be empty')
             msg_box.setWindowFlag(Qt.WindowStaysOnTopHint, True)
@@ -701,7 +752,8 @@ class listAdd(QWidget,listwindowAddUi):
 
         else:
             self.parentWidget.listWidget.addItem(item)
-            self.parentWidget.listWidget.setItemWidget(item, widget)
+            self.parentWidget.listWidget.setItemWidget(item,widget2)
+            #widget2.refreshlayout()
         self.close()
 
     def closeEvent(self,event):

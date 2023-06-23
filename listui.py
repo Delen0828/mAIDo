@@ -21,7 +21,14 @@ class mylistwidget(QtWidgets.QListWidget):
     def mousePressEvent(self,event):
         self.clearSelection()
         super().mousePressEvent(event)
-
+    def dropEvent(self, event) :
+        pos = event.pos()
+        taritem=self.itemAt(pos)
+        if taritem==None:
+            print('非法拖拽位置')
+        else:
+            print(taritem.label.text())
+            super().dropEvent(event)
 class listUi(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
